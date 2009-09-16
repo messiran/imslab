@@ -1,2 +1,5 @@
+= pract pagina =
+http://staff.science.uva.nl/~ksande/teaching/ims/lab2
+
 = matlab stater op uva computers: =
 /opt/arch/matlab-edu_r2009a/bin/matlab
