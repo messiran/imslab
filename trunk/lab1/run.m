@@ -1,5 +1,6 @@
 close all
-img=im2double(rgb2gray(imread('images/nemo1.jpg')));
+img=im2double(imread('images/nemo1.jpg'));
+
 h = figure;
 imshow(img);
 
@@ -9,46 +10,35 @@ y = rect(2);
 w = rect(3);
 h = rect(4);
 
-        
-%x = 249;
-%y = 104;
-%w = 62;
-%h = 71;
+       
+% x = 249;
+% y = 104;
+% w = 62;
+% h = 71;
 
-nemo = img(y:y+h, x:x+w);
+nemo = img(y:y+h, x:x+w, :);
 figure
 imshow(nemo)
 
-nbins = 50;
+[M, N, P] = size(nemo);
+nemoReshaped = reshape(nemo, [M*N, P]);
 
-histogram = hist(nemo,[0:1/nbins:1]);
-histogram = sum(histogram');
-histogramNorm = histogram / sum(sum(histogram))
+NBins = [20, 20, 20];
+locs = img2histloc(nemoReshaped, NBins);
+
+counts = full(sparse(locs, ones(M*N,1), ones(M*N,1), prod(NBins), 1));
+p = counts/(M*N);
 
 
-[imgH, imgW] = size(img)
-imgProb = zeros(imgH, imgW);
 
-% img = nemo;
-% [imgH, imgW] = size(img)
+% save prob on corresponding index
+[M, N, P] = size(img);
+imgReshaped = reshape(img, [M*N, P]);
 
-for i = 1:imgH
-    for j = 1:imgW
-        i
-        p = img(i,j);
-        %pHist = hist(p, nbins);
-
-        if p == 0
-            pHist = 1;
-        else
-            pHist = ceil(p*nbins);
-        end
-
-        imgProb(i,j) = histogramNorm(pHist);
-    end
-end
+imgloc = img2histloc(imgReshaped, NBins);
+result = p(imgloc);
+result = reshape(result, [M,N]);
 
 figure;
-imshow(imgProb, []);
-
+imshow(result,[]);
 
