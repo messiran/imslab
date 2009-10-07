@@ -39,7 +39,7 @@ h = floor(rect(4));
 
 % show xy image converted back
 subplot(2,2,2);
-imshow(xy2rgb(img));
+imshow(img);
        
 % x = 249;
 % y = 104;
@@ -66,7 +66,8 @@ p = counts/(M*N);
 
 % save prob on corresponding index
 %img = I_xyl2;
-img = img2;
+
+%img = img2;
 [M, N, P] = size(img);
 imgReshaped = reshape(img, [M*N, P]);
 
@@ -79,8 +80,8 @@ result = reshape(result, [M,N]);
 subplot(2,2,3)
 imshow(img2)
 subplot(2,2,4)
-imgT = xy2rgb(img2)
-imshow(imgT)
+%imgT = xy2rgb(img2)
+imshow(img2)
 figure;
 imshow(result,[]);
 
