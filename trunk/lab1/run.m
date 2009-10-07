@@ -1,18 +1,34 @@
 close all
 clear all
 
-img1=im2double(imread('images/nemo1.jpg'));
-img2=im2double(imread('images/nemo2.jpg'));
+%% Variables
 
+image_files = str2mat('nemo1.jpg', 'nemo2.jpg');
+image_dir = 'images';
+NBins = [20, 20, 20];
+
+
+
+%% Read images
+
+imgs = cell(1,size(image_files,1));
+for i=1:size(image_files, 1)
+    imgstr = strcat(image_dir,'/',image_files(i,:));
+    imgs(i)={im2double(imread(imgstr))};
+end
+
+img1 = cell2mat(imgs(1,1));
+img2 = cell2mat(imgs(1,2));
 % goto xy space
-I_xyl1 = rgb2xy(img1);
-I_xyl2 = rgb2xy(img2);
+%I_xyl1 = rgb2xy(img1);
+%I_xyl2 = rgb2xy(img2);
 
 %show original
 h = figure;
 subplot(2,2,1);
 imshow(img1);
-img = I_xyl1;
+img = img1;
+%img = I_xyl1;
 
 %get region
 rect = getrect(h)
@@ -37,10 +53,11 @@ nemo = img(y:y+h, x:x+w, :);
 [M, N, P] = size(nemo);
 nemoReshaped = reshape(nemo, [M*N, P]);
 
-NBins = [20, 20];
+
 
 % get locks
-locs = img2histloc2D(nemoReshaped, NBins);
+%locs = img2histloc2D(nemoReshaped, NBins);
+locs = img2histloc(nemoReshaped, NBins);
 % get counts
 counts = full(sparse(locs, ones(M*N,1), ones(M*N,1), prod(NBins), 1));
 p = counts/(M*N);
@@ -48,14 +65,17 @@ p = counts/(M*N);
 
 
 % save prob on corresponding index
-img = I_xyl2;
+%img = I_xyl2;
+img = img2;
 [M, N, P] = size(img);
 imgReshaped = reshape(img, [M*N, P]);
 
-imgloc = img2histloc2D(imgReshaped, NBins);
+%imgloc = img2histloc2D(imgReshaped, NBins);
+imgloc = img2histloc(imgReshaped, NBins);
+
 result = p(imgloc);
 result = reshape(result, [M,N]);
-
+%%
 subplot(2,2,3)
 imshow(img2)
 subplot(2,2,4)
