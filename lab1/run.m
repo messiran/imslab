@@ -146,7 +146,7 @@ title('Labeled by Histogram bin')
 %Region of Interest
 subplot(3,3,7);
 imshow(imgOrigIn(y:y+h, x:x+w, :));
-Title('Original Region of Interes')
+Title('Original Region of Interest')
 subplot(3,3,8);
 imshow(imgTMPRoi)
 title('Colorspace converted')
