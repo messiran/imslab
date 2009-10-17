@@ -32,7 +32,7 @@ switch lower(method)
         % the normalisation in denominator with min(num(H1), num(H2)) not
         % needed if histogram adds up to 1 I think
         %disp('Histogram intersection');
-        dists = sum(min(Hs, Hss));
+        dists = -sum(min(Hs, Hss));
     otherwise
         disp('Unknown method');
 end
