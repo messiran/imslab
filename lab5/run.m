@@ -103,18 +103,49 @@ imgLocOut = reshape(colLocOut,[MOut,NOut]);
 
 % calculate distances
 % this may be optimized by keeping partial counts
+
 dists1 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'BC');
 dists2 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'EU');
 dists3 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'HI');
 
+%% alternative method
+%reshape
+imgLocOut = reshape(colLocOut, [MOut, NOut]);
+colsLocOut = im2col(imgLocOut, [h, w]+1, 'sliding');
+% count buckets
+histOut = locs2hists(colsLocOut, NBins);
 
+dists11 = histdists(histRoi, histOut, 'BC');
+dists11 = reshape(dists11, [settings.searchNbh]*2+1);
+dists22 = histdists(histRoi, histOut, 'EU');
+dists22 = reshape(dists22, [settings.searchNbh]*2+1);
+dists33 = histdists(histRoi, histOut, 'HI');
+dists33 = reshape(dists33, [settings.searchNbh]*2+1);
+
+sum(sum(dists11 ~= dists1))
+sum(sum(dists22 ~= dists2))
+sum(sum(dists33 ~= dists3))
 
 %[iMax, iIndex] = max(reshape(dists1,[1,size(dist1,1)*size(dists1,2)]))
 
-[yMax, yIndex] = min(dists1)
-[xMax, xIndex] = min(min(dists1))
-yIndex = yIndex(xIndex);
+[Min1, yIndex1] = min(dists1);
+[Min1, xIndex1] = min(Min1);
+yIndex1 = yIndex1(xIndex1);
 
+[Min2, yIndex2] = min(dists2);
+[Min2, xIndex2] = min(Min2);
+yIndex2 = yIndex2(xIndex2);
+
+[Min3, yIndex3] = min(dists3);
+[Min3, xIndex3] = min(Min3);
+yIndex3 = yIndex3(xIndex3);
+
+%xIndex1 
+%yIndex1
+%xIndex2 
+%yIndex2
+%xIndex3 
+%yIndex3
 
 
 % show original, colorspaces, histogram regions as labels
@@ -176,13 +207,13 @@ subplot(2,2,1)
 imshow(backImgOut,[]);
 title('Histogram backprojection')
 subplot(2,2,2)
-imshow(dists1)
+imshow(dists1, [])
 title('Bhattacharyya Distance')
 subplot(2,2,3)
-imshow(dists2)
+imshow(dists2, [])
 title('Euclidean Distance')
 subplot(2,2,4)
-imshow(dists3)
+imshow(dists3, [])
 title('Histogram Intersection')
 
 %show profiler
