@@ -1,8 +1,25 @@
 close all
 clear
 
+global COLOR GETROI PROF settings
+
+
+numFrame = 85:88
 % frame reader
 %for iFrame=85:139
+
+if (exist('frames.mat')==2)
+    load frames.mat;
+else
+    frames = {};
+    for iFrame = 1:length(numFrame)
+        sFile = sprintf('Frame%04d.png',numFrame(iFrame));
+        img = im2double(imread(strcat('frames/',sFile)));
+        figure; imshow(img);
+        frames{iFrame} = img;
+    end
+    save frames.mat frames;
+end
 
 if (exist('frames.mat')==2)
     load frames.mat;
@@ -24,7 +41,8 @@ COLOR = struct('RGB', 0, 'XY', 1);
 GETROI = struct('ON', 0, 'OFF', 1);
 
 PROF = struct('ON', 0, 'OFF', 1);
-settings = struct('color', COLOR.RGB, 'getRoi', GETROI.OFF, 'prof', PROF.ON,'searchNbh', [20,20]);
+settings = struct('color', COLOR.RGB, 'getRoi', GETROI.OFF, 'prof', PROF.ON,'searchNbh', [5,5]);
+
 
 % other settings
 if settings.color == COLOR.XY
@@ -39,8 +57,8 @@ if settings.prof == PROF.ON
 end
 
 % temporary
-imgOrigIn = frames{85};
-imgOrigOut = frames{85};
+imgOrigIn = frames(:,:,:,1);
+imgOrigOut = frames(:,:,:,1);
 
 %% change colorspace
 if settings.color == COLOR.XY
@@ -84,7 +102,12 @@ colLocRoi = img2histloc(colRoi, NBins);
 histRoi = locs2hists(colLocRoi, NBins);
 
 % crop imageout to define search area
-imgOut = imgOut(y-settings.searchNbh(2):y+settings.searchNbh(2)+h, x-settings.searchNbh(1):x+settings.searchNbh(1)+w, :);
+searchx = x-settings.searchNbh(1);
+searchy = y-settings.searchNbh(2);
+searchw = 2*settings.searchNbh(1)+w;
+searchh = 2*settings.searchNbh(2)+h;
+
+imgOut = imgOut(searchy:searchy+searchh, searchx:searchx+searchw, :);
 [MOut, NOut, POut] = size(imgOut);
 
 % imshow(imgRoi);
@@ -97,34 +120,32 @@ imgOut = imgOut(y-settings.searchNbh(2):y+settings.searchNbh(2)+h, x-settings.se
 colOut = reshape(imgOut, [MOut*NOut, POut]);
 colLocOut = img2histloc(colOut, NBins);
 backImgOut = reshape(histRoi(colLocOut), [MOut,NOut]);
+colsbackOut = im2col(backImgOut, [h, w]+1, 'sliding');
+dist = mean(colsbackOut);
+dist = reshape(dist, [[settings.searchNbh]*2+1]);
+
+
 
 % get sliding window histograms
 imgLocOut = reshape(colLocOut,[MOut,NOut]);
 
-% calculate distances
+%% calculate distances
 % this may be optimized by keeping partial counts
 
-dists1 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'BC');
-dists2 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'EU');
-dists3 = myImageFilter(imgLocOut, [MRoi,NRoi], histRoi, NBins, 'HI');
-
-%% alternative method
-%reshape
 imgLocOut = reshape(colLocOut, [MOut, NOut]);
 colsLocOut = im2col(imgLocOut, [h, w]+1, 'sliding');
 % count buckets
 histOut = locs2hists(colsLocOut, NBins);
 
-dists11 = histdists(histRoi, histOut, 'BC');
-dists11 = reshape(dists11, [settings.searchNbh]*2+1);
-dists22 = histdists(histRoi, histOut, 'EU');
-dists22 = reshape(dists22, [settings.searchNbh]*2+1);
-dists33 = histdists(histRoi, histOut, 'HI');
-dists33 = reshape(dists33, [settings.searchNbh]*2+1);
+dists = histdists(histRoi, histOut, 'all', 'normalise');
+dists = reshape(dists, [[settings.searchNbh]*2+1, 4]);
 
-sum(sum(dists11 ~= dists1))
-sum(sum(dists22 ~= dists2))
-sum(sum(dists33 ~= dists3))
+dists1 = dists(:,:,1);
+dists2 = dists(:,:,2);
+dists3 = dists(:,:,3);
+
+test = 1-dist - dists(:,:,4)
+test = sum(sum(test))<=0.0000001
 
 %[iMax, iIndex] = max(reshape(dists1,[1,size(dist1,1)*size(dists1,2)]))
 
@@ -148,73 +169,19 @@ yIndex3 = yIndex3(xIndex3);
 %yIndex3
 
 
-% show original, colorspaces, histogram regions as labels
+
 % label original image using histogram bins as labels
 colIn = reshape(imgIn, [MIn*NIn, PIn]);
 colLocIn = img2histloc(colIn, NBins);
 imgLocIn = reshape(colLocIn,[MIn, NIn]);
 % reshape labeled ROI
 imgLocRoi = reshape(colLocRoi,[MRoi, NRoi]);
+imgOrigRoi = imgOrigIn(y:y+h, x:x+w, :);
+%print everything
+prettyPlots(imgOrigIn, imgOrigOut, imgOrigRoi, imgIn, imgOut, imgRoi, imgLocIn, imgLocOut, imgLocRoi, dists)
 
-% show different colorspace image converted back
-if settings.color == COLOR.XY
-    imgTMPIn = xy2rgb(imgIn);
-    imgTMPOut= xy2rgb(imgOut);
-    imgTMPRoi = xy2rgb(imgRoi);
-else
-    imgTMPIn = imgIn;
-    imgTMPOut = imgOut;
-    imgTMPRoi = imgRoi;
-end
 
-figure
-%Input
-subplot(3,3,1);
-imshow(imgOrigIn);
-title('Original Input')
-subplot(3,3,2);
-imshow(imgTMPIn)
-title('Colorspace converted')
-subplot(3,3,3)
-imshow(label2rgb(imgLocIn));
-title('Labeled by Histogram bin')
 
-%Output
-subplot(3,3,4);
-imshow(imgOrigOut);
-title('Original Output')
-subplot(3,3,5);
-imshow(imgTMPOut)
-title('Colorspace converted')
-subplot(3,3,6)
-imshow(label2rgb(imgLocOut));
-title('Labeled by Histogram bin')
-
-%Region of Interest
-subplot(3,3,7);
-imshow(imgOrigIn(y:y+h, x:x+w, :));
-title('Original Region of Interest')
-subplot(3,3,8);
-imshow(imgTMPRoi)
-title('Colorspace converted')
-subplot(3,3,9)
-imshow(label2rgb(imgLocRoi));
-title('Labeled by Histogram bin')
-
-% show back projection & histogram distsances
-figure
-subplot(2,2,1)
-imshow(backImgOut,[]);
-title('Histogram backprojection')
-subplot(2,2,2)
-imshow(dists1, [])
-title('Bhattacharyya Distance')
-subplot(2,2,3)
-imshow(dists2, [])
-title('Euclidean Distance')
-subplot(2,2,4)
-imshow(dists3, [])
-title('Histogram Intersection')
 
 %show profiler
 if settings.prof == PROF.ON
