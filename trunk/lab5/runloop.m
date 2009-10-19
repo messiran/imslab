@@ -16,7 +16,7 @@ settings = struct(...
     'getRoi', GETROI.OFF, ...
     'prof', PROF.ON, ...
     'searchNbh', [20,20], ...
-    'dirty', DIRTY.dirty);
+    'dirty', DIRTY.clean);
 
 
 % other settings
@@ -109,6 +109,7 @@ for i = 1:size(frames, 4)
     mask = getmask(size(fig),[track(i,1,1)+w/2-1, track(i,2,1)+h/2-1, 2, 2], 'ellipse');
     fig(mask)=1;
     % write in frames, to save memory
+    imgIn = frames(:,:,:,i);
     frames(:,:,:,i) = fig;
     
     % update window, we now track on 1st dimension
