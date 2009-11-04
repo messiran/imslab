@@ -1,10 +1,10 @@
-function frames = frameReader(method, dirty)
+function frames = frameReader(method, cache)
 
 
 switch lower(method) 
     case {'voetbal'}
     numFrame = 85:96;
-    if (exist('frames.mat')==2 & ~dirty)
+    if (exist('frames.mat')==2 & cache)
         load frames.mat;
     else
         for i = 1:length(numFrame)

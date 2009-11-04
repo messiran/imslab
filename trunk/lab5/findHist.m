@@ -1,8 +1,8 @@
-function hit = findHist(Hs, imgSearch, window)
+function hit = findHist(HsTemplate, imgSearch, window)
 % finds the wanted histogram, and gives back the locations
 
 % globals
-global COLOR GETROI PROF settings
+global COLOR settings
 
 %% change colorspace
 if settings.color == COLOR.XY
@@ -27,7 +27,7 @@ colsLocSearch = im2col(imgLocSearch, [window(2), window(1)], 'sliding');
 histSearch = locs2hists(colsLocSearch, settings.NBins);
 
 % calculate distances
-dists = histdists(Hs, histSearch, 'all', 'normalise');
+dists = histdists(HsTemplate, histSearch, 'bc', 'normalise');
 dists = reshape(dists, [[settings.searchNbh]*2+1, size(dists, 3)]);
 
 % find best matches
