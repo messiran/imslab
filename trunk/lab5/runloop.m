@@ -13,7 +13,7 @@ PROF = struct('ON', 0, 'OFF', 1);
 CACHE = struct('ON', true, 'OFF', false);
 settings = struct(...
     'color', COLOR.RGB, ...
-    'getRoi', GETROI.OFF, ...
+    'getRoi', GETROI.ON, ...
     'prof', PROF.OFF, ...
     'searchNbh', [20,20], ...
     'cache', CACHE.ON);
@@ -50,13 +50,14 @@ end
 
 %% get region of interest
 if settings.getRoi == GETROI.ON
+    handle = figure;
     imshow(imgOrigIn);
-    rect = getrect(h)
+    rect = getrect(handle)
     x = floor(rect(1));
     y = floor(rect(2));
     w = floor(rect(3));
     h = floor(rect(4));
-    close(h);
+    close(handle);
 else
     x = 575;
     y = 230;
@@ -68,6 +69,7 @@ end
 kernel = getmask(0,[x,y,w,h], 'Epanechnikov');
 colKernel = reshape(kernel, [1, (w+1)*(h+1)]);
     
+imgRoi = imgPrev(y:y+h, x:x+w, :);
 % main loop
 for i = 1:size(frames, 4)
 
@@ -76,7 +78,7 @@ for i = 1:size(frames, 4)
     % findHist except for the 1st time
 
     % get region of interest
-    imgRoi = imgPrev(y:y+h, x:x+w, :);
+    %imgRoi = imgPrev(y:y+h, x:x+w, :);
     [MRoi, NRoi, PRoi] = size(imgRoi);
     colRoi = reshape(imgRoi, [MRoi*NRoi, PRoi]);
 
@@ -114,16 +116,14 @@ end
 frames = addTrackingInfo(frames, track, w, h);
     
 
-montage(frames)
+%montage(frames)
 
 %show profiler
 if settings.prof == PROF.ON
     profile viewer
 end
 
-
-
-saveMovie(frames, 'result.avi', 15, 100,'None');
+saveMovie(frames, 'result.avi', 10, 100,'None');
 
 
 
