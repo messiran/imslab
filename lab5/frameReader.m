@@ -3,7 +3,7 @@ function frames = frameReader(method, cache)
 
 switch lower(method) 
     case {'voetbal'}
-    numFrame = 85:96;
+    numFrame = 85:139;
     if (exist('frames.mat')==2 & cache)
         load frames.mat;
     else
