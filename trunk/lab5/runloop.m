@@ -63,8 +63,12 @@ else
     w = 10;
     h = 40;
 end
+%% get weighting kernel for historgram counts
 
-
+kernel = getmask(0,[x,y,w,h], 'Epanechnikov');
+colKernel = reshape(kernel, [1, (w+1)*(h+1)]);
+    
+% main loop
 for i = 1:size(frames, 4)
 
     %% Get region of interest and calculate new histogram 
@@ -76,11 +80,13 @@ for i = 1:size(frames, 4)
     [MRoi, NRoi, PRoi] = size(imgRoi);
     colRoi = reshape(imgRoi, [MRoi*NRoi, PRoi]);
 
+
+    
     % construct histogram
     % get bin location
     colLocRoi = img2histloc(colRoi, settings.NBins);
     % count buckets
-    histRoi = locs2hists(colLocRoi, settings.NBins);
+    histRoi = locs2hists(colLocRoi, settings.NBins, colKernel);
 
     % crop imageout to define search area
     searchX = x-settings.searchNbh(1);
@@ -92,7 +98,7 @@ for i = 1:size(frames, 4)
     %[MOut, NOut, POut] = size(imgSearchArea);
 
     % find the best histogram matches per difference method
-    track(i,:) = findHist(histRoi, imgSearchArea, [w, h]+1);
+    track(i,:) = findHist(histRoi, imgSearchArea, [w, h]+1, colKernel);
      
     % add the searchWindow location coords
     track(i,:) = track(i,:) + [searchX,searchY] - 1;
@@ -117,9 +123,14 @@ end
 
 
 
+saveMovie(frames, 'result.avi', 15, 100,'None');
+
+
+
 % todo herhistogrammen (bij min distance opnieuw histogram berekenen (regiondimensions aanpassen??))
 % histogram gaussen, (midden belangrijker)
 % lokatie voorspellen mean shift
 
 % gaus op colorimportance en locatie
 % learning rate
+% remove repmat van locs2hists

@@ -1,4 +1,4 @@
-function hit = findHist(HsTemplate, imgSearch, window)
+function hit = findHist(HsTemplate, imgSearch, window, colKernel)
 % finds the wanted histogram, and gives back the locations
 
 % globals
@@ -24,7 +24,7 @@ colsLocSearch = im2col(imgLocSearch, [window(2), window(1)], 'sliding');
 %% calculate distances
 % this may be optimized by keeping partial counts
 % count buckets, create histograms
-histSearch = locs2hists(colsLocSearch, settings.NBins);
+histSearch = locs2hists(colsLocSearch, settings.NBins, colKernel);
 
 % calculate distances
 dists = histdists(HsTemplate, histSearch, 'bc', 'normalise');
