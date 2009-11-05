@@ -13,8 +13,8 @@ PROF = struct('ON', 0, 'OFF', 1);
 CACHE = struct('ON', true, 'OFF', false);
 settings = struct(...
     'color', COLOR.RGB, ...
-    'getRoi', GETROI.ON, ...
-    'prof', PROF.OFF, ...
+    'getRoi', GETROI.OFF, ...
+    'prof', PROF.ON, ...
     'searchNbh', [20,20], ...
     'cache', CACHE.ON);
 
@@ -68,27 +68,23 @@ end
 
 kernel = getmask(0,[x,y,w,h], 'Epanechnikov');
 colKernel = reshape(kernel, [1, (w+1)*(h+1)]);
-    
+
+% get region of interest in starting picture       
 imgRoi = imgPrev(y:y+h, x:x+w, :);
+[MRoi, NRoi, PRoi] = size(imgRoi);
+colRoi = reshape(imgRoi, [MRoi*NRoi, PRoi]);
+% construct histogram
+% get bin location
+colLocRoi = img2histloc(colRoi, settings.NBins);
+% count buckets
+histRoi = locs2hists(colLocRoi, settings.NBins, colKernel);
+
 % main loop
 for i = 1:size(frames, 4)
 
     %% Get region of interest and calculate new histogram 
     % TODO this histogram has already been calculated in
     % findHist except for the 1st time
-
-    % get region of interest
-    %imgRoi = imgPrev(y:y+h, x:x+w, :);
-    [MRoi, NRoi, PRoi] = size(imgRoi);
-    colRoi = reshape(imgRoi, [MRoi*NRoi, PRoi]);
-
-
-    
-    % construct histogram
-    % get bin location
-    colLocRoi = img2histloc(colRoi, settings.NBins);
-    % count buckets
-    histRoi = locs2hists(colLocRoi, settings.NBins, colKernel);
 
     % crop imageout to define search area
     searchX = x-settings.searchNbh(1);
@@ -112,25 +108,29 @@ for i = 1:size(frames, 4)
     imgPrev = frames(:,:,:,i);
 end
 
-% add tracking info (rectangle)
-frames = addTrackingInfo(frames, track, w, h);
-    
-
-%montage(frames)
-
 %show profiler
 if settings.prof == PROF.ON
     profile viewer
 end
 
-saveMovie(frames, 'result.avi', 10, 100,'None');
+% add tracking info (rectangle)
+frames = addTrackingInfo(frames, track, w, h);
+    
+figure
+movie(immovie(frames))
+saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
 
 
 
-% todo herhistogrammen (bij min distance opnieuw histogram berekenen (regiondimensions aanpassen??))
-% histogram gaussen, (midden belangrijker)
+
+
+
+
+% todo herhistogrammen (bij min distance opnieuw histogram berekenen???
+% (regiondimensions aanpassen??))
 % lokatie voorspellen mean shift
 
-% gaus op colorimportance en locatie
+% gaus op colorimportance en locatie? mag dit met mean shift?
 % learning rate
-% remove repmat van locs2hists
+
+% EPANECHNIKOV DOES NOT SUM TO 1!!!

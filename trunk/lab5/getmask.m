@@ -27,7 +27,8 @@ switch lower(type)
     case {'uniform'}
         mask = logical(ones(RC(1), RC(2)));
     case {'epanechnikov', 'epa', 'epo', 'echni'}
-        % K_E = 0.5 * (1./cd)*(d+2)*(1-||x||^2)
+        % K_E = 0.5 * (1/cd)*(d+2)*(1-||x||^2)
+        % d = 2
         % cd = number of data points
         % d = dimensions
         bound = sqrt(1/2);
@@ -38,4 +39,6 @@ switch lower(type)
         
         cd = (w+1)*(h+1);
         mask = (2/cd)*(1-XYeuclDist);
+        %normalise
+        mask = mask/sum(sum(mask));
 end
