@@ -27,12 +27,12 @@ x = Roi(1); y = Roi(2); w = Roi(3); h = Roi(4);
 %% get weighting kernel for historgram counts
 
 kernel = getMask(0, Roi, 'Epanechnikov');
-kernel = getMask(0, Roi, 'uniform');
 % TODO reshape to column vector in a stand alone function
 vectKernel = reshape(kernel, [1, (w+1)*(h+1)]);
 
 [dummy,vectTHist] = getHist(vectKernel, imgT, Roi, settings);
 
+xNewVect = [];
 % meanShift loop
 for i = 1:size(frames, 4)
     imgC = frames(:,:,:,i);
@@ -43,7 +43,7 @@ for i = 1:size(frames, 4)
     Pu = vectCHist
 
     % targetmodel
-    Qu = vectTHist;
+    Qu = vectTHist
 
     % define absolute start location 
     Y0 = [x+.5*w, y + .5*h]
@@ -52,13 +52,21 @@ for i = 1:size(frames, 4)
     Wbin = sqrt(Qu./Pu);
     
     % the W's per bin per pixel in the image
-    W = Wbin(vectCLoc);
+    W = Wbin(vectCLoc)
     X = getMask(2, Roi, 'location');
     % duplicate W 2 times in the width dim
 
     Yshift = sum((W * ones(1,2)).*X) / sum(W)
-    pause;
+    xNew = x+Yshift(1)*.5*(w+1)
+    xNewVect = [xNewVect;xNew];
+    yNew = y+Yshift(2)*.5*(h+1)
+    close;
+    imshow(frames(:,:,:,i));
+    hold on;
+    rectangle('Position',[xNew,yNew, w, h]);
 end
+
+xNewVect
 
 % %show profiler
 % if settings.prof == settings.PROF.ON

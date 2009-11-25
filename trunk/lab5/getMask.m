@@ -25,7 +25,7 @@ switch lower(type)
         mask = ((X - center(1)).^2 / sqwidth(1)) + ((Y - center(2)).^2 / sqwidth(2)) <= 1;
         mask = repmat(mask, [1,1,dims(3)]);
     case {'uniform'}
-        mask = ones(h+1,w+1)
+        mask = ones(h+1,w+1);
         mask = mask/sum(sum(mask));
     case {'epanechnikov', 'epa', 'epo', 'echni'}
         % K_E = 0.5 * (1/cd)*(d+2)*(1-||x||^2)

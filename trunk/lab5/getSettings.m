@@ -21,7 +21,8 @@ function settings = readSettings()
     if settings.color == settings.COLOR.XY
         settings.NBins = [16,16];
     else
-        settings.NBins = [2,2,2];
+        %settings.NBins = [16,16,16];
+        settings.NBins = [32,32,32];
     end
 
     % do profiling if needed
