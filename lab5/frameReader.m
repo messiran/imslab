@@ -1,14 +1,13 @@
-function frames = frameReader(method, cache)
+function frames = frameReader(method, settings)
 
 
 switch lower(method) 
     case {'voetbal'}
-    numFrame = 85:139;
-    if (exist('frames.mat')==2 & cache)
+    if (exist('frames.mat')==2 & settings.cache)
         load frames.mat;
     else
-        for i = 1:length(numFrame)
-            sFile = sprintf('Frame%04d.png',numFrame(i));
+        for i = 1:length(settings.frameRange)
+            sFile = sprintf('Frame%04d.png',settings.frameRange(i));
             frames(:,:,:,i) = im2double(imread(strcat('frames/',sFile)));
             %figure; imshow(frames(:,:,:,i));
         end

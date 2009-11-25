@@ -14,7 +14,8 @@ function histloc = img2histloc(img, nbins)
 
 %init variables
 x=0; y=0; z=0;
-[M N P] = size(img);
+P = size(img,2);
+
 
 % make nbins same dimension as colorspace in image
 %if length(nbins) == 1
