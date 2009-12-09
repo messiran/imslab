@@ -15,7 +15,7 @@ function settings = readSettings()
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
-    settings.frameRange = 85:139;
+    settings.frameRange = 60:120;
 
     % other settings
     if settings.color == settings.COLOR.XY
@@ -27,8 +27,11 @@ function settings = readSettings()
 
     % do profiling if needed
     if settings.prof == settings.PROF.ON
+		profile clear
         profile on
 	else
 		profile off
     end
+
+	settings.frames = frameReader('snowboard', settings);
 end

@@ -1,10 +1,9 @@
-close all
-clear all
+function meanShift(settings)
 
-settings = getSettings();
+%settings = getSettings();
 
 %read frames
-frames = frameReader('voetbal', settings);
+frames = settings.frames;
 
 % get target image (first frame)
 imgT = transformColor(frames(:,:,:,1), settings);
@@ -17,13 +16,14 @@ if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
     Roi =  [floor(rect(1)),...
             floor(rect(2)),...
             floor(rect(3)),...
-            floor(rect(4))];
+            floor(rect(4))]
 	save('Roi.mat', 'Roi');
     close(handle);
 else 
 	if (exist('Roi.mat')==2)
 		load('Roi.mat');
 	else
+		disp('loading default roi');
 		Roi = settings.defaultRoi;
 	end
 end
@@ -37,16 +37,18 @@ vectKernel = reshape(kernel, [1, (w+1)*(h+1)]);
 
 [dummy,vectTHist] = getHist(vectKernel, imgT, Roi, settings);
 
-xNewVect = [];
+% location filter (e.g. -2 -1 0 1 2)
+locMask = getMask(2, Roi, 'location');
+
 % meanShift loop
 for i = 2:size(frames, 4)
 	i
     imgC = frames(:,:,:,i);
 
 
-	Yshift = 1;
+	shift = 1;
 	% perform shift till shift is negligible 
-	while(max(abs(Yshift))>=0.5)
+	while(max(abs(shift))>=0.5)
 		% get candidate image
 		[vectCLoc, vectCHist] = getHist(vectKernel, imgC, Roi, settings);
 		
@@ -66,50 +68,54 @@ for i = 2:size(frames, 4)
 		% set the W's in corresponding pixel in the image
 		W = Wbin(vectCLoc);
 
-		% location filter (e.g. -2 -1 0 1 2)
-		X = getMask(2, Roi, 'location');
 
 		% duplicate W 2 times in the width dim
-		Yshift = sum((W * ones(1,2)).*X) / sum(W);
-		xNew = round(Roi(1)+Yshift(1));
-		xNewVect = [xNewVect;xNew];
-		yNew = round(Roi(2)+Yshift(2));
-		close;
+		shift = sum((W * ones(1,2)).*locMask) / sum(W);
+		%xNew = round(Roi(1)+Yshift(1));
+		%yNew = round(Roi(2)+Yshift(2));
+		
+        Roi(1:2) = round(Roi(1:2)+shift); 
+		%Roi(1:2) = [xNew, yNew];
 		%imshow(frames(:,:,:,i));
-		hold on;
 		%rectangle('Position',[xNew,yNew, w, h]);
-		f = frames(:,:,:,i);
-		x = Roi(1); y = Roi(2);
-        f(y,     x:x+w, :)=0;
-        f(y+h,   x:x+w, :)=0;
-        f(y:y+h, x    , :)=0;
-        f(y:y+h, x+w  , :)=0;
+		% x = Roi(1); y = Roi(2);
+        % f(y,     x:x+w, :)=0;
+        % f(y+h,   x:x+w, :)=0;
+        % f(y:y+h, x    , :)=0;
+        % f(y:y+h, x+w  , :)=0;
+        frames(Roi(2),     Roi(1):Roi(1)+w, :, i)=0;
+        frames(Roi(2)+h,   Roi(1):Roi(1)+w, :, i)=0;
+        frames(Roi(2):Roi(2)+h, Roi(1)    , :, i)=0;
+        frames(Roi(2):Roi(2)+h, Roi(1)+w  , :, i)=0;
 
 		%rectMask = getMask(size(f),Roi,'border');
 		% TODO optimize with ones
 		%rectMask = repmat(rectMask, [1,1,3]);
 		%f(rectMask) = 0;
-		frames(:,:,:,i) = f;
 
 		% define new Roi
-		Roi(1) = xNew;
-		Roi(2) = yNew;
 	end
+	% draw red rectangle
+	frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
+	frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
+	frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;
+	frames(Roi(2):Roi(2)+h, Roi(1)+w  , 1, i)=255;
 
 	%framesTracked(:,:,:,i-1) = f.cdata;
-	disp('shift!');
 end
-
-%movie(immovie(frames))
-saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
 
 % show the profiler result
 if settings.prof == settings.PROF.ON
 	profile viewer 
 end
 
+disp('saving movie...');
+%movie(immovie(frames))
+saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
+
+
 % play movie
-!mplayer -fps 2 result.avi
+!mplayer -fps 10 -msglevel all=-1 result.avi
 
 % todo herhistogrammen (bij min distance opnieuw histogram berekenen???
 % (regiondimensions aanpassen??))
