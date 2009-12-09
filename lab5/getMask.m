@@ -39,13 +39,14 @@ switch lower(type)
         XYeuclDist = X.^2+Y.^2;
         
         cd = (w+1)*(h+1);
+		
         mask = (2/cd)*(1-XYeuclDist);
+		mask(mask<0)=0;
         %normalise
         mask = mask/sum(sum(mask));
     case {'location', 'loc', 'xi','lok', 'lock', 'lokc'}
-        bound = 1;
-        xRange = [-bound:2*bound/w:+bound];
-        yRange = [-bound:2*bound/h:+bound];
+        xRange = [-w/2:w/2];
+        yRange = [-h/2:h/2];
         [X, Y] = meshgrid(xRange, yRange);
         mask = [reshape(X,[prod(size(X)),1]), reshape(Y,[prod(size(Y)),1])];
 
