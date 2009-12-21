@@ -73,7 +73,38 @@ for i = 2:size(frames, 4)
 
 	end
 	% store tracking data
-	RoiTracked(i-1,:) = [Roi(1:2), h, w];
+    previous = RoiTracked(i-2,:);
+    
+    % compare X
+    cRois(1,:) = [Roi(1:2), h, w];
+    cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h]
+    cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h]
+    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
+    vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
+    
+    dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
+    [bestBC, I] = min(dists);
+    bestCRoi = cRois(I,:);
+    bestVectCHist = vectCHist(:,I);
+    
+    % compare Y
+    cRois(1,:) = bestCRoi;
+    cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2]
+    cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2]
+    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
+    vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
+    
+    [bestBC, I] = min(dists);
+    bestCRoi = cRois(I,:);
+    bestVectCHist = vectCHist(:,I);
+    
+    if(bestBC) > previousBC
+        RoiTracked(i-1,:) = RoiTracked(i-1,:)
+    else
+        RoiTracked(i-1,:) = bestCRoi;
+    end
 end
 
 % show the profiler result
