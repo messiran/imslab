@@ -100,7 +100,6 @@ disp('saving movie...');
 saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
 
 
-
 % todo herhistogrammen (bij min distance opnieuw histogram berekenen???
 % (regiondimensions aanpassen??))
 % lokatie voorspellen mean shift
