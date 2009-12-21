@@ -78,14 +78,15 @@ for i = 2:size(frames, 4)
 		% define new Roi
 	end
 	% draw red rectangle
-	frames(Roi(2),     Roi(1):Roi(1)+w, 2:3, i)=0;
-	frames(Roi(2)+h,   Roi(1):Roi(1)+w, 2:3, i)=0;
-	frames(Roi(2):Roi(2)+h, Roi(1)    , 2:3, i)=0;
-	frames(Roi(2):Roi(2)+h, Roi(1)+w  , 2:3, i)=0;
-	frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
-	frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
-	frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;
-	frames(Roi(2):Roi(2)+h, Roi(1)+w  , 1, i)=255;
+	% frames(Roi(2),     Roi(1):Roi(1)+w, 2:3, i)=0;
+	% frames(Roi(2)+h,   Roi(1):Roi(1)+w, 2:3, i)=0;
+	% frames(Roi(2):Roi(2)+h, Roi(1)    , 2:3, i)=0;
+	% frames(Roi(2):Roi(2)+h, Roi(1)+w  , 2:3, i)=0;
+	% frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
+	% frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
+	% frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;
+	% frames(Roi(2):Roi(2)+h, Roi(1)+w  , 1, i)=255;
+	RoiTracked(i-1,:) = Roi(1:2)
 
 	%framesTracked(:,:,:,i-1) = f.cdata;
 end
@@ -95,9 +96,11 @@ if settings.prof == settings.PROF.ON
 	profile viewer 
 end
 
+imageFrame(frames, RoiTracked)
+
 disp('saving movie...');
-%movie(immovie(frames))
-saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
+saveMovie(frames, RoiTracked, 'result.avi', 10, 100,'Cinepak');
+
 
 
 % todo herhistogrammen (bij min distance opnieuw histogram berekenen???
