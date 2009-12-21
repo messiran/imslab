@@ -100,8 +100,6 @@ disp('saving movie...');
 saveMovie(frames, 'result.avi', 10, 100,'Cinepak');
 
 
-% play movie
-!mplayer -fps 10 -msglevel all=-1 result.avi
 
 % todo herhistogrammen (bij min distance opnieuw histogram berekenen???
 % (regiondimensions aanpassen??))

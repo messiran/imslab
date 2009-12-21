@@ -1,4 +1,5 @@
 function settings = readSettings()
+	global frames;
     %% Variables
     % settings controling process flow
 
@@ -37,6 +38,7 @@ function settings = readSettings()
 		settings.frames = frames;
 	else
 		settings.frames = frameReader('snowboard', settings);
+		frames = settings.frames;
 	end	
 	
 
