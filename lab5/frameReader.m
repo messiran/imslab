@@ -6,9 +6,11 @@ movieName = settings.movieName;
 %frames = framesGlobal;
 
 % load frames from workspace if it exists
-if exist('framesGlobal') == 1 && length(framesGlobal)>0 && 1==0
-	disp('loading frames from workspace');
-	frames = framesGlobal;
+if exist('framesGlobal') == 1 && 1==2
+	if length(framesGlobal)>1 
+		disp('loading frames from workspace');
+		frames = framesGlobal;
+	end
 else
 	if (exist('frames.mat')==2 & settings.cache)
 		disp('loading frames.mat');
