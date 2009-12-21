@@ -12,7 +12,7 @@ function settings = readSettings()
     % instantiate settings
     settings.color = settings.COLOR.XY;
     settings.getRoi = settings.GETROI.ON;
-    settings.prof = settings.PROF.OFF;
+    settings.prof = settings.PROF.ON;
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
