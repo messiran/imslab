@@ -10,13 +10,13 @@ function settings = readSettings()
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.rg;
+    settings.color = settings.COLOR.H;
     settings.getRoi = settings.GETROI.ON;
     settings.prof = settings.PROF.OFF;
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
-    settings.frameRange = 60:120;
+    settings.frameRange = 3147:3180;
 
     % other settings
     if settings.color == settings.COLOR.XY

@@ -13,7 +13,7 @@ switch lower(settings.color)
         C2 = makecform('xyz2srgb');
 
         %add luminance
-        img(:,;,3)=ones(size(img(:,:,1)));
+        img(:,:,3)=ones(size(img(:,:,1)));
         
         % transform
         img = applycform(img,C1);
