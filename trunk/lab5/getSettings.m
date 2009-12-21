@@ -10,7 +10,7 @@ function settings = readSettings()
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.XY;
+    settings.color = settings.COLOR.RGB;
     settings.getRoi = settings.GETROI.ON;
     settings.prof = settings.PROF.ON;
     settings.searchNbh = [20,20];

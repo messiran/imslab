@@ -7,7 +7,7 @@ if (exist('frames.mat')==2 & settings.cache)
 else
 	switch lower(method) 
 		case {'voetbal'}
-			sFile = sprintf('frames/Frame%04d.png',settings.frameRange(1));
+			sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(1));
 		case{'snowboard'}
 			% 223
 			sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(1))
@@ -19,7 +19,7 @@ else
 	for i = 1:length(settings.frameRange)
 		switch lower(method) 
 			case {'voetbal'}
-				sFile = sprintf('frames/Frame%04d.png',settings.frameRange(i));
+				sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(i));
 			case{'snowboard'}
 				% 223
 				sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(i))
