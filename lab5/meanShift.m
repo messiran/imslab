@@ -58,9 +58,6 @@ for i = 2:size(frames, 4)
 		% targetmodel
 		Qu = vectTHist;
 
-		% define absolute start location 
-		% Y0 = [x+.5*w, y + .5*h]
-
 		% the W's per bin
 		Wbin = sqrt(Qu./Pu);
 		% solve Nan problem
@@ -68,25 +65,10 @@ for i = 2:size(frames, 4)
 		% set the W's in corresponding pixel in the image
 		W = Wbin(vectCLoc);
 
-
 		% duplicate W 2 times in the width dim
 		shift = sum((W * ones(1,2)).*locMask) / sum(W);
-		%xNew = round(Roi(1)+Yshift(1));
-		%yNew = round(Roi(2)+Yshift(2));
 		
         Roi(1:2) = round(Roi(1:2)+shift); 
-		%Roi(1:2) = [xNew, yNew];
-		%imshow(frames(:,:,:,i));
-		%rectangle('Position',[xNew,yNew, w, h]);
-		% x = Roi(1); y = Roi(2);
-        % f(y,     x:x+w, :)=0;
-        % f(y+h,   x:x+w, :)=0;
-        % f(y:y+h, x    , :)=0;
-        % f(y:y+h, x+w  , :)=0;
-        frames(Roi(2),     Roi(1):Roi(1)+w, :, i)=0;
-        frames(Roi(2)+h,   Roi(1):Roi(1)+w, :, i)=0;
-        frames(Roi(2):Roi(2)+h, Roi(1)    , :, i)=0;
-        frames(Roi(2):Roi(2)+h, Roi(1)+w  , :, i)=0;
 
 		%rectMask = getMask(size(f),Roi,'border');
 		% TODO optimize with ones
@@ -96,6 +78,10 @@ for i = 2:size(frames, 4)
 		% define new Roi
 	end
 	% draw red rectangle
+	frames(Roi(2),     Roi(1):Roi(1)+w, 2:3, i)=0;
+	frames(Roi(2)+h,   Roi(1):Roi(1)+w, 2:3, i)=0;
+	frames(Roi(2):Roi(2)+h, Roi(1)    , 2:3, i)=0;
+	frames(Roi(2):Roi(2)+h, Roi(1)+w  , 2:3, i)=0;
 	frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
 	frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
 	frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;

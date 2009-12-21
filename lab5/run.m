@@ -1,3 +1,5 @@
 close all
 clear all
-meanShift(getSettings())
+
+frames = frameReader('snowboard', settings);
+meanShift( getSettings() )

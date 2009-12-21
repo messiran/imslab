@@ -9,7 +9,7 @@ function settings = readSettings()
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.RGB;
+    settings.color = settings.COLOR.XY;
     settings.getRoi = settings.GETROI.ON;
     settings.prof = settings.PROF.OFF;
     settings.searchNbh = [20,20];
@@ -33,5 +33,11 @@ function settings = readSettings()
 		profile off
     end
 
-	settings.frames = frameReader('snowboard', settings);
+	if exist('frames') == 1
+		settings.frames = frames;
+	else
+		settings.frames = frameReader('snowboard', settings);
+	end	
+	
+
 end
