@@ -1,4 +1,4 @@
-function img = transformColor(img, settings)
+function img = rgb2color(img, settings)
 
 %% change colorspace
 switch lower(settings.color)
