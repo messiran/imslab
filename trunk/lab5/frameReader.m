@@ -1,33 +1,52 @@
-function frames = frameReader(method, settings)
+function frames = frameReader(settings)
+global framesGlobal;
 
-if (exist('frames.mat')==2 & settings.cache)
-	disp('loading frames.mat');
-	load frames.mat;
-	disp('done loading frames.mat');
+movieName = settings.movieName;
+
+%frames = framesGlobal;
+
+% load frames from workspace if it exists
+if exist('framesGlobal') == 1 && length(framesGlobal)>0 && 1==0
+	disp('loading frames from workspace');
+	frames = framesGlobal;
 else
-	switch lower(method) 
-		case {'voetbal'}
-			sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(1));
-		case{'snowboard'}
-			sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(1))
-		case {'parachute'}
-			sFile = sprintf('framesParachute/Frame%04d.png',settings.frameRange(1));
-	end
-
-	% declare frames for optimization
-	frames = zeros([size(rgb2color(im2double(imread(sFile))), settings),length(settings.frameRange)]);
-
-	for i = 1:length(settings.frameRange)
-		switch lower(method) 
+	if (exist('frames.mat')==2 & settings.cache)
+		disp('loading frames.mat');
+		load frames.mat;
+		disp('done loading frames.mat');
+	else
+		disp('loading frames from png');
+		switch lower(movieName) 
 			case {'voetbal'}
-				sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(i));
+				sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(1));
 			case{'snowboard'}
-				sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(i))
-			case{'parachute'}
-				sFile = sprintf('framesParachute/%08d.png',settings.frameRange(i))
+				sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(1));
+			case {'parachute'}
+				sFile = sprintf('framesParachute/%08d.png',settings.frameRange(1));
 		end
-		frames(:,:,:,i) = rgb2color(im2double(imread(sFile)), settings);
+
+		% declare frames for optimization
+		[m,n,p] = size( rgb2color(im2double(imread(sFile)), settings))
+		frames = zeros([m, n, p, length(settings.frameRange)]);
+
+		size(frames)
+		for i = 1:length(settings.frameRange)
+			i
+			switch lower(movieName) 
+				case {'voetbal'}
+					sFile = sprintf('framesVoetbal/%08d.png',settings.frameRange(i));
+				case{'snowboard'}
+					sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(i));
+				case{'parachute'}
+					sFile = sprintf('framesParachute/%08d.png',settings.frameRange(i));
+			end
+			frames(:,:,:,i) = rgb2color( im2double(imread(sFile)), settings);
+		end
+		disp('saving to frames.mat...');
+		save frames.mat frames;
+		disp('done');
 	end
-	save frames.mat frames;
-end
+
+end	
+
 

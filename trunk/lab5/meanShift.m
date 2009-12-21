@@ -29,6 +29,8 @@ else
 end
 x = Roi(1); y = Roi(2); w = Roi(3); h = Roi(4);
 
+RoiTracked(1,:) = Roi;
+
 %% get weighting kernel for historgram counts
 
 kernel = getMask(0, Roi, 'Epanechnikov');
@@ -40,6 +42,8 @@ vectKernel = reshape(kernel, [1, (w+1)*(h+1)]);
 % location filter (e.g. -2 -1 0 1 2)
 locMask = getMask(2, Roi, 'location');
 
+previousBC = 0;
+
 % meanShift loop
 for i = 2:size(frames, 4)
 	i
@@ -50,6 +54,7 @@ for i = 2:size(frames, 4)
 	% perform shift till shift is negligible 
 	while(max(abs(shift))>=0.5)
 		% get candidate image
+        vectKernel = reshape(getMask(0, Roi, 'Epanechnikov'), [1, (w+1)*(h+1)]);
 		[vectCLoc, vectCHist] = getHist(vectKernel, imgC, Roi, settings);
 		
 		% candidate model
@@ -66,6 +71,7 @@ for i = 2:size(frames, 4)
 		W = Wbin(vectCLoc);
 
 		% duplicate W 2 times in the width dim
+        locMask = getMask(2, Roi, 'location');
 		shift = sum((W * ones(1,2)).*locMask) / sum(W);
 		
         Roi(1:2) = round(Roi(1:2)+shift); 
@@ -73,39 +79,50 @@ for i = 2:size(frames, 4)
 
 	end
 	% store tracking data
-    previous = RoiTracked(i-2,:);
     
     % compare X
-    cRois(1,:) = [Roi(1:2), h, w];
-    cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h]
-    cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h]
+	% different roi's
+    cRois(1,:) = [Roi(1:2), w, h];
+    cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h];
+    cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h];
+	% TODO size vectKernel addapt to size roi ?
+    vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
     [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
     [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
     vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
+    
+	% returns a 1x3 dist vector
+    dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
+	% roi with smallest distance 
+    [bestBC, idx] = min(dists);
+    bestCRoi = cRois(idx,:);
+    bestVectCHist = vectCHists(:,idx);
+    
+    % compare Y & previous ROI
+    cRois(1,:) = bestCRoi;
+    cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2];
+    cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2];
+    cRois(4,:) = RoiTracked(i-1,:);
+    vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
+    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
+    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
+    vectKernel = reshape( getMask(0, cRois(4,:), 'Epanechnikov'), [1, (cRois(4,3)+1)*(cRois(4,4)+1)]);
+    [dummy, vectCPreviousHist] = getHist(vectKernel, frames(:,:,:,i), cRois(4,:), settings);
+    vectCHists = [bestVectCHist, vectCSmallHist, vectCLargeHist, vectCPreviousHist];
     
     dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
-    [bestBC, I] = min(dists);
-    bestCRoi = cRois(I,:);
-    bestVectCHist = vectCHist(:,I);
+    [bestBC, idx] = min(dists);
+    bestCRoi = cRois(idx,:);
+    bestVectCHist = vectCHists(:,idx);
     
-    % compare Y
-    cRois(1,:) = bestCRoi;
-    cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2]
-    cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2]
-    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
-    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
-    vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
-    
-    [bestBC, I] = min(dists);
-    bestCRoi = cRois(I,:);
-    bestVectCHist = vectCHist(:,I);
-    
-    if(bestBC) > previousBC
-        RoiTracked(i-1,:) = RoiTracked(i-1,:)
-    else
-        RoiTracked(i-1,:) = bestCRoi;
-    end
-    x = RoiTracked(i-1,1); y = RoiTracked(i-1,2); w = RoiTracked(i-1,3); h = RoiTracked(i-1,4);
+
+	RoiTracked(i,:) = bestCRoi;
+
+    Roi = RoiTracked(i,:);
+    x = RoiTracked(i,1); y = RoiTracked(i,2); w = RoiTracked(i,3); h = RoiTracked(i,4);
+
 end
 
 % show the profiler result
