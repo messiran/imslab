@@ -105,6 +105,7 @@ for i = 2:size(frames, 4)
     else
         RoiTracked(i-1,:) = bestCRoi;
     end
+    x = RoiTracked(i-1,1); y = RoiTracked(i-1,2); w = RoiTracked(i-1,3); h = RoiTracked(i-1,4);
 end
 
 % show the profiler result
