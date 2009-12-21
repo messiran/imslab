@@ -4,15 +4,15 @@ function settings = readSettings()
     % settings controling process flow
 
     % declare settings vars
-    settings = struct(  'COLOR', struct('RGB', 0, 'XY', 1),...
+    settings = struct(  'COLOR', struct('RGB', 0, 'XY', 1, 'rg', 2, 'H', 3, 'HS', 4, 'HSV', 5),...
                         'GETROI', struct('ON', 0, 'OFF', 1),...
                         'PROF', struct('ON', 0, 'OFF', 1),...
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.RGB;
+    settings.color = settings.COLOR.rg;
     settings.getRoi = settings.GETROI.ON;
-    settings.prof = settings.PROF.ON;
+    settings.prof = settings.PROF.OFF;
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
@@ -34,12 +34,14 @@ function settings = readSettings()
 		profile off
     end
 
+	% load frames from workspace if it exists
 	if exist('frames') == 1
+		disp('loading frames from workspace');
 		settings.frames = frames;
 	else
+		disp('loading frames from frames.mat');
 		settings.frames = frameReader('snowboard', settings);
 		frames = settings.frames;
 	end	
-	
 
 end
