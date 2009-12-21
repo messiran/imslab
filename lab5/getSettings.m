@@ -1,5 +1,4 @@
-function settings = readSettings()
-	global frames;
+function settings = getSettings()
     %% Variables
     % settings controling process flow
 
@@ -10,17 +9,28 @@ function settings = readSettings()
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.H;
+    settings.color = settings.COLOR.RGB;
     settings.getRoi = settings.GETROI.ON;
     settings.prof = settings.PROF.OFF;
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
-    settings.frameRange = 3147:3180;
+	settings.movieName = 'snowboard';
+    %settings.frameRange = 3147:3247;
+    settings.frameRange = 1:100;
+	settings.N = 16;
+
+	switch(lower(settings.color))
+		case {settings.COLOR.H}
+			settings.NBins = settings.N;
+		case {settings.COLOR.XY, settings.COLOR.rg, settings.COLOR.HS}
+			settings.NBins = settings.N * ones(1,2);
+		case {settings.COLOR.RGB, settings.COLOR.HSV}
+			settings.NBins = settings.N * ones(1,3);
+	end
 
     % other settings
     if settings.color == settings.COLOR.XY
-        settings.NBins = [16,16];
     else
         settings.NBins = [16,16,16];
         %settings.NBins = [2,2,2];
@@ -34,14 +44,5 @@ function settings = readSettings()
 		profile off
     end
 
-	% load frames from workspace if it exists
-	if exist('frames') == 1
-		disp('loading frames from workspace');
-		settings.frames = frames;
-	else
-		disp('loading frames from frames.mat');
-		settings.frames = frameReader('snowboard', settings);
-		frames = settings.frames;
-	end	
-
+	settings.frames = frameReader(settings);
 end

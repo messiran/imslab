@@ -1,6 +1,11 @@
 close all
 
 settings = getSettings();
+
+disp('globalizing frames..');
+global framesGlobal;
+framesGlobal = settings.frames;
+
 meanShift( settings )
 
 % play movie
