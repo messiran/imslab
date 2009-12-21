@@ -6,12 +6,12 @@ function meanShift(settings)
 frames = settings.frames;
 
 % get target image (first frame)
-imgT = transformColor(frames(:,:,:,1), settings);
+imgT = frames(:,:,:,1);
 
 %% get region of interest
 if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
     handle = figure('Visible','off');
-    imshow(imgT);
+    imshow(color2rgb(imgT,settings));
     rect = getrect(handle);
     Roi =  [floor(rect(1)),...
             floor(rect(2)),...
@@ -70,25 +70,10 @@ for i = 2:size(frames, 4)
 		
         Roi(1:2) = round(Roi(1:2)+shift); 
 
-		%rectMask = getMask(size(f),Roi,'border');
-		% TODO optimize with ones
-		%rectMask = repmat(rectMask, [1,1,3]);
-		%f(rectMask) = 0;
 
-		% define new Roi
 	end
-	% draw red rectangle
-	% frames(Roi(2),     Roi(1):Roi(1)+w, 2:3, i)=0;
-	% frames(Roi(2)+h,   Roi(1):Roi(1)+w, 2:3, i)=0;
-	% frames(Roi(2):Roi(2)+h, Roi(1)    , 2:3, i)=0;
-	% frames(Roi(2):Roi(2)+h, Roi(1)+w  , 2:3, i)=0;
-	% frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
-	% frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
-	% frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;
-	% frames(Roi(2):Roi(2)+h, Roi(1)+w  , 1, i)=255;
-	RoiTracked(i-1,:) = Roi(1:2)
-
-	%framesTracked(:,:,:,i-1) = f.cdata;
+	% store tracking data
+	RoiTracked(i-1,:) = [Roi(1:2), h, w];
 end
 
 % show the profiler result
@@ -96,10 +81,10 @@ if settings.prof == settings.PROF.ON
 	profile viewer 
 end
 
-imageFrame(frames, RoiTracked)
+%imageFrame(frames, RoiTracked)
 
 disp('saving movie...');
-saveMovie(frames, RoiTracked, 'result.avi', 10, 100,'Cinepak');
+saveMovie(frames, RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
 
 
 

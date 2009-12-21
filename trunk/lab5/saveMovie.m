@@ -1,21 +1,14 @@
-function saveMovie(frames, RoiTracked, movieName, fps, quality, compression)
+function saveMovie(frames, RoiTracked, movieName, fps, quality, compression, settings)
     % unix cannot compress
     if isunix
         compression = 'None';
     end
     currMovie = avifile(movieName, 'fps', fps, 'quality', quality, 'Compression', compression);
-    for i=1:size(frames,4)
+    for i=1:size(frames,4)-1;
 
-		Roi = RoiTracked(i);
-		frames(Roi(2),     Roi(1):Roi(1)+w, 2:3, i)=0;
-		frames(Roi(2)+h,   Roi(1):Roi(1)+w, 2:3, i)=0;
-		frames(Roi(2):Roi(2)+h, Roi(1)    , 2:3, i)=0;
-		frames(Roi(2):Roi(2)+h, Roi(1)+w  , 2:3, i)=0;
-		frames(Roi(2),     Roi(1):Roi(1)+w, 1, i)=255;
-		frames(Roi(2)+h,   Roi(1):Roi(1)+w, 1, i)=255;
-		frames(Roi(2):Roi(2)+h, Roi(1)    , 1, i)=255;
-		frames(Roi(2):Roi(2)+h, Roi(1)+w  , 1, i)=255;
-        currMovie = addframe(currMovie, frames(:,:,:,i));
+		RoiTrack = RoiTracked(i,:);
+		frame = frameDrawRect(color2rgb(frames(:,:,:,i), settings), RoiTrack, [255, 255, 0]);
+        currMovie = addframe(currMovie, frame);
     end
     currMovie = close(currMovie);
 end
