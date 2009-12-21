@@ -4,16 +4,18 @@ function img = transformColor(img, settings)
 switch lower(settings.color)
     %case {settings.COLOR.RGB}
     
-    case {settings.COLOR.rg}   
+    case {settings.COLOR.rg}
+        R = img(:,:,1);
+        G = img(:,:,2);
         r = ones(size(img(:,:,1))) * 1/3;
         g = r;
         
         norm = sum(img,3);
         mask = norm > 0;
-        r(mask) = img(:,:,1)./norm;
-        g(mask) = img(:,:,2)./norm;
-        img(:,:,1) = r;
-        img(:,:,2) = g;
+        r(mask) = R(mask)./norm(mask);
+        g(mask) = G(mask)./norm(mask);
+      
+        img = cat(3,r,g);
         
     case {settings.COLOR.XY}
         % prepare transforms
