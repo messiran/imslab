@@ -17,7 +17,7 @@ function settings = getSettings()
     settings.defaultRoi = [575, 230, 10, 40];
 	settings.movieName = 'snowboard';
     %settings.frameRange = 3147:3247;
-    settings.frameRange = 1:100;
+    settings.frameRange = 8:60;
 	settings.N = 16;
 
 	switch(lower(settings.color))
