@@ -19,32 +19,57 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-Videos are a ubiquitous, in the UK it has been claimed that there is one observation camera per 14 citizens [CLAIM: "A CCTV camera for every 14 citizens."
-David Davis, resignation statement, 12 June 2008 ]. YouTube.com the largest video website in the USA with a marketshare of 99\% of all watched online videos serves more than 10 Billion movies a month[http://mashable.com/2009/09/28/august-comscore-data/]. 
-Furthermore, the amount of videos uploded to the site through mobile phones is growing exponentially[http://arstechnica.com/apple/news/2009/06/mobile-uploads-to-youtube-up-400-after-iphone-3gs-launch.ars].
-Ideally we would like to analyse video's to be able to extract their content, forinstance, to make them accessible for search or to alert the viewer of important developments. One of these analysis is tracking an object through multipe frames of video.
+	Videos are a ubiquitous, in the UK it has been claimed that there is one observation camera per 14 citizens [CLAIM: "A CCTV camera for every 14 citizens."
+	David Davis, resignation statement, 12 June 2008 ]. YouTube.com the largest video website in the USA with a marketshare of 99\% of all watched online videos serves more than 10 Billion movies a month[http://mashable.com/2009/09/28/august-comscore-data/]. 
+	Furthermore, the amount of videos uploded to the site through mobile phones is growing exponentially[http://arstechnica.com/apple/news/2009/06/mobile-uploads-to-youtube-up-400-after-iphone-3gs-launch.ars].
+	Ideally we would like to analyse video's to be able to extract their content, forinstance, to make them accessible for search or to alert the viewer of important developments. One of these analysis is tracking an object through multipe frames of video.
 
-Generally tracking can be done in two distinct manners; First, a model of the object to be tracked can be build, one can think of a wireframe model of the object together with texture or color information. 
-In every frame this model is searched for and the location that resembles the model best is the location of the object. A problem with this approach is that a model for every object needs to be build, usually can only be applied to small specialist domains. 
-The other approach does not build a full model but looks at the appearance of an object and looks searches for regions that appear the same, thus not a fully descriptive model is build. 
-The assumption is that small local features of the tracked model appear the same over multiple frames, one such feature is color.
+	Generally tracking can be done in two distinct manners; First, a model of the object to be tracked can be build, one can think of a wireframe model of the object together with texture or color information. 
+	In every frame this model is searched for and the location that resembles the model best is the location of the object. A problem with this approach is that a model for every object needs to be build, usually can only be applied to small specialist domains. 
+	The other approach does not build a full model but looks at the appearance of an object and looks searches for regions that appear the same, thus not a fully descriptive model is build. 
+	The assumption is that small local features of the tracked model appear the same over multiple frames, one such feature is color.
 
-This paper will present and compare methods within the appearance based vision paradigm, namely the color based mean-shift tracker and brute-force tracker. 
-Since color will be the feature that will be tracked, different color models will be presented, applied and subsequent tracking results on diffent videos for both trackers will be discussed.
-The main focus of this paper will be to present and compare the mean-shift tracker and explain through experiments how the tracker behaves under varying video conditions. (such as occulusion and objects of varying scales), and what the influence of the used color model is.
-As said at the beginning ofthis section videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will therefore also be discussed.
+	This paper will present and compare methods within the appearance based vision paradigm, namely the color based mean-shift tracker and brute-force tracker. 
+	Since color will be the feature that will be tracked, different color models will be presented, applied and subsequent tracking results on diffent videos for both trackers will be discussed.
+	The main focus of this paper will be to present and compare the mean-shift tracker and explain through experiments how the tracker behaves under varying video conditions. (such as occulusion and objects of varying scales), and what the influence of the used color model is.
+	As said at the beginning ofthis section videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will therefore also be discussed.
 
-This paper is organised as follows, after an introduction of the topic in section 1, the theory behind the used trackers and colorspaces will be discussed in section 2.
-Section 3 will be devoted to the implementation of the presented theories. The experimental setup, subsequent results and their discussion will be presented in section 4. 
-Finally, section 5 will present the main conclusions on color based mean shift tracking.
+	This paper is organised as follows, after an introduction of the topic in section 1, the theory behind the used trackers and colorspaces will be discussed in section 2.
+	Section 3 will be devoted to the implementation of the presented theories. The experimental setup, a description of the data, subsequent results and their discussion will be presented in section 4. 
+	Finally, section 5 will present the main conclusions on color based mean shift tracking.
 
-Intro Bla
-Why we want it
-What we are gonna do
-Paper Content
-\section{Theory}
+%TODO check
+%Intro Bla
+%Why we want it
+%hat we are gonna do
+%Paper Content
+\section{Theory}	
+	This section will explain the main theories used in developing the mean shift tracker. 
 	\subsection{Colorspace}
+		In the introduction we mentioned that we would track an object on its appearance and that the feature we would use would be color. In this section we will discribe three different color models and their relevance.
+
+		\subsubsection{RGB}
+		The color a camera dectects is dependend on the Spectral power distribution(SPD) of the light source, the reflectance factor of the object, which describes what part of the spectrum gets reflected and what gets absorbed, and the color matching functions of the camera sensors. 
+		All perceivable colors can, based on trichrimacy theory[quote gevers], be modeled by the response of three sensors. 
+		
+		RGB is a standard colorspace used in computer vision, which desribes the detected colors as a tri-stimulus, (R,G,B). Where R corresponds the response of the Red sensor, which is most sensitive to Red, G to the response of the green sensor and B to the resonse of the Blue sensor.
+
+		% TODO where should invariants go?, say some general about invariants and show table[Color Feature Detection, Geveres]
+		However, this model has some problems for the domain of object tracking. it is not invariant to illumination intensity, which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
+		Furthermore, RGB 
+		
+
+		\
+
+		\subsubsection{normalised rgb}
+		normalised RGB is a colormodel which is invariant to illumination intensity, orientation of the object surface and also viewpoint invariant. 
+		normalised RGB is derived from RGB by deviding the reponse of each color channel by the intensity, thus creating an intensity invariant colorspace
+		\subsubsection{Hue}
+		The Hue is derived from a different color space, where a color is not described as the response of three RGB sensors but it is described as a Hue, which can be seen as a pure spectral color, saturation which describes how pure the color is, if it is fully satureated there is a pure spectral color, less saturated colors have more white mixed in. Last the intensity describes how bright the color is. 
+		Hue is invariant to illumination and object and observer geometry and highlights. [quote invariant claim]
 	\subsection{Histogram}
+
+
 
 	\subsection{Brute force}
 		First the tracked object is modeled by computing a color histogram, the
