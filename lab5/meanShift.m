@@ -3,10 +3,10 @@ function meanShift(settings)
 %settings = getSettings();
 
 %read frames
-frames = settings.frames;
+%frames = settings.frames;
 
 % get target image (first frame)
-imgT = frames(:,:,:,1);
+imgT = settings.frames(:,:,:,1);
 
 %% get region of interest
 if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
@@ -45,9 +45,9 @@ locMask = getMask(2, Roi, 'location');
 previousBC = 0;
 
 % meanShift loop
-for i = 2:size(frames, 4)
+for i = 2:size(settings.frames, 4)
 	i
-    imgC = frames(:,:,:,i);
+    imgC = settings.frames(:,:,:,i);
 
 
 	shift = 1;
@@ -63,8 +63,10 @@ for i = 2:size(frames, 4)
 		% targetmodel
 		Qu = vectTHist;
 
+        warning off all
 		% the W's per bin
 		Wbin = sqrt(Qu./Pu);
+        warning on all
 		% solve Nan problem
 		Wbin(Pu==0) = 0;
 		% set the W's in corresponding pixel in the image
@@ -87,9 +89,9 @@ for i = 2:size(frames, 4)
     cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h];
 	% TODO size vectKernel addapt to size roi ?
     vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
     vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
+    [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
     vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
     
 	% returns a 1x3 dist vector
@@ -105,11 +107,11 @@ for i = 2:size(frames, 4)
     cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2];
     cRois(4,:) = RoiTracked(i-1,:);
     vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    [dummy, vectCSmallHist] = getHist(vectKernel, frames(:,:,:,i), cRois(2,:), settings);
+    [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
     vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    [dummy, vectCLargeHist] = getHist(vectKernel, frames(:,:,:,i), cRois(3,:), settings);
+    [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
     vectKernel = reshape( getMask(0, cRois(4,:), 'Epanechnikov'), [1, (cRois(4,3)+1)*(cRois(4,4)+1)]);
-    [dummy, vectCPreviousHist] = getHist(vectKernel, frames(:,:,:,i), cRois(4,:), settings);
+    [dummy, vectCPreviousHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(4,:), settings);
     vectCHists = [bestVectCHist, vectCSmallHist, vectCLargeHist, vectCPreviousHist];
     
     dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
@@ -130,10 +132,10 @@ if settings.prof == settings.PROF.ON
 	profile viewer 
 end
 
-%imageFrame(frames, RoiTracked)
+%imageFrame(settings.frames, RoiTracked)
 
 disp('saving movie...');
-saveMovie(frames, RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
+saveMovie(settings.frames, RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
 
 
 

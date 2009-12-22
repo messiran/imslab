@@ -17,7 +17,7 @@ function settings = getSettings()
     settings.defaultRoi = [575, 230, 10, 40];
 	settings.movieName = 'snowboard';
     %settings.frameRange = 3147:3247;
-    settings.frameRange = 8:60;
+    settings.frameRange = 8:40;
 	settings.N = 16;
 
 	switch(lower(settings.color))
@@ -27,13 +27,6 @@ function settings = getSettings()
 			settings.NBins = settings.N * ones(1,2);
 		case {settings.COLOR.RGB, settings.COLOR.HSV}
 			settings.NBins = settings.N * ones(1,3);
-	end
-
-    % other settings
-    if settings.color == settings.COLOR.XY
-    else
-        settings.NBins = [16,16,16];
-        %settings.NBins = [2,2,2];
     end
 
     % do profiling if needed
@@ -45,4 +38,3 @@ function settings = getSettings()
     end
 
 	settings.frames = frameReader(settings);
-end
