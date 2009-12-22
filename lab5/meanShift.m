@@ -136,7 +136,7 @@ end
 %imageFrame(settings.frames, RoiTracked)
 
 disp('saving movie...');
-saveMovie(settings.frames, RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
+saveMovie(RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
 
 
 

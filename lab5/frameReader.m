@@ -46,7 +46,7 @@ function frames = frameReader(settings)
 			% downsample
             frames(:,:,:,i) = frame(1:settings.downSampleRate:end,1:settings.downSampleRate:end,:);
         end
-        disp('saving to frames.mat...');
+        disp('\nsaving to frames.mat...');
         save frames.mat frames;
         disp('done');
     end

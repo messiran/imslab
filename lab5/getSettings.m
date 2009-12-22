@@ -18,7 +18,7 @@ function settings = getSettings(inpColor, inpGetRoi)
     settings.defaultRoi = [575, 230, 10, 40];
 	settings.movieName = 'voetbal';
     %settings.frameRange = 3147:3247;
-    settings.frameRange = 85:285;
+    settings.frameRange = 85:139;
 	settings.N = 16;
 	settings.downSampleRate = 2;
 
