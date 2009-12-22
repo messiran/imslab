@@ -1,23 +1,24 @@
-function settings = getSettings()
+function settings = getSettings(inpColor, inpGetRoi)
     %% Variables
     % settings controling process flow
 
     % declare settings vars
     settings = struct(  'COLOR', struct('RGB', 0, 'XY', 1, 'rg', 2, 'H', 3, 'HS', 4, 'HSV', 5),...
-                        'GETROI', struct('ON', 0, 'OFF', 1),...
+                        'GETROI', struct('ON', 1, 'OFF', 0),...
                         'PROF', struct('ON', 0, 'OFF', 1),...
                         'CACHE', struct('ON', true, 'OFF', false));
     
     % instantiate settings
-    settings.color = settings.COLOR.RGB;
-    settings.getRoi = settings.GETROI.ON;
+    %settings.color = settings.COLOR.RGB;
+    settings.color = inpColor;
+    settings.getRoi = inpGetRoi; 
     settings.prof = settings.PROF.OFF;
     settings.searchNbh = [20,20];
     settings.cache = settings.CACHE.ON;
     settings.defaultRoi = [575, 230, 10, 40];
-	settings.movieName = 'snowboard';
+	settings.movieName = 'voetbal';
     %settings.frameRange = 3147:3247;
-    settings.frameRange = 8:40;
+    settings.frameRange = 85:139;
 	settings.N = 16;
 
 	switch(lower(settings.color))
