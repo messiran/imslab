@@ -45,8 +45,53 @@ Paper Content
 \section{Theory}
 	\subsection{Colorspace}
 	\subsection{Histogram}
+
 	\subsection{Brute force}
+		First the tracked object is modeled by computing a color histogram, the
+		target model.
+		In the next frame a new color histogram is computed on every location,
+		these are the candidate models.
+		The target model is compared with all candidate models using a distance
+		measure. The new location is determined by the location of the candidate
+		histogram with the lowest distance.
+		
+		\paragraph{Semi Brute force}
+		Using the fact that we work with 25 frames every second and objects are moving
+		within a maximum speed, an assumption can be made that the object
+		location should be close to the previous location. This optimalization
+		ignores a lot of unnecessary computations.
+
+	
 	\subsection{Meanshift}
+	Mean shift is an algorithm that finds the most probable target position of a
+	tracked object in a frame.
+
+	First a the tracked object is modeled by computing a color histogram.
+	Likewise on the same location but in the next frame an other color histogram is
+	computed.
+
+	These two histograms are compared using a Bhattagarya distance measure. This
+	results in a weight image where high values represent pixels that are
+	simmilar.  For the intuition, when an object moved to the left, the weight
+	values will be high on the left side. Furthermore the weights will be low on
+	the right side because new information (different colors) entered the
+	searchwindow. 
+
+	This is used to weight an image which contain relative locations
+	(where the origin is situated in the center of this image). This result in
+	an image where each pixel represents a weighted shift. It is easy to see
+	that the mean shift is the mean of this image.
+	
+	% TODO 
+	%Above steps are done iteratively till a 
+
+	% (2) is to be sure pixels that are farther away from the center are assigned a lower weight.
+
+	% To prevent overshoot the mean shift vector is divided by 2 and added up to
+	% the old location Y1.
+
+	% The algorithm repeats on this new location until the mean shift vector is
+	% smaller then a certain convergence threshold, for example 1 pixel.
 
 \section{Implementation}
 
