@@ -8,7 +8,7 @@ inpColor = input('')
 % if no input is given and settings is in workspace
 if length(inpColor)==0 
 	disp('you entered no value');
-	if exist('settings.color')==0
+	if exist('settings')==0
 		disp('I cant find settings in workspace');
 		ERR;
 	else
@@ -32,6 +32,9 @@ end
 
 fprintf('Define your choice \n  (0) use old region of interest \n  (1) use custom region of interest selection\n');
 inpGetRoi = input('');
+if length(inpGetRoi)==0 
+	inpGetRoi = settings.getRoi;
+end
 if inpGetRoi == 1
 	delete Roi.mat
 end

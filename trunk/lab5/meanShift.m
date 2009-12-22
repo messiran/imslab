@@ -16,7 +16,7 @@ if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
     Roi =  [floor(rect(1)),...
             floor(rect(2)),...
             floor(rect(3)),...
-            floor(rect(4))]
+            floor(rect(4))];
 	save('Roi.mat', 'Roi');
     close(handle);
 else 
@@ -46,7 +46,7 @@ previousBC = 0;
 
 % meanShift loop
 for i = 2:size(settings.frames, 4)
-	i
+	fprintf('\nmeanshift process %02.1f%\n\n', i/size(settings.frames, 4)*100);
     imgC = settings.frames(:,:,:,i);
 
 
@@ -83,48 +83,48 @@ for i = 2:size(settings.frames, 4)
 	% store tracking data
     
 	RoiTracked(i,:) = [Roi(1:2), w, h];
-    % % compare X
-	% % different roi's
-    % cRois(1,:) = [Roi(1:2), w, h];
-    % cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h];
-    % cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h];
-	% % TODO size vectKernel addapt to size roi ?
-    % vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    % [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    % [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
-    % vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
-    % 
-	% % returns a 1x3 dist vector
-    % dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
-	% % roi with smallest distance 
-    % [bestBC, idx] = min(dists);
-    % bestCRoi = cRois(idx,:);
-    % bestVectCHist = vectCHists(:,idx);
-    % 
-    % % compare Y & previous ROI
-    % cRois(1,:) = bestCRoi;
-    % cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2];
-    % cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2];
-    % cRois(4,:) = RoiTracked(i-1,:);
-    % vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    % [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    % [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(4,:), 'Epanechnikov'), [1, (cRois(4,3)+1)*(cRois(4,4)+1)]);
-    % [dummy, vectCPreviousHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(4,:), settings);
-    % vectCHists = [bestVectCHist, vectCSmallHist, vectCLargeHist, vectCPreviousHist];
-    % 
-    % dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
-    % [bestBC, idx] = min(dists);
-    % bestCRoi = cRois(idx,:);
-    % bestVectCHist = vectCHists(:,idx);
-    % 
+    % compare X
+	% different roi's
+    cRois(1,:) = [Roi(1:2), w, h];
+    cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h];
+    cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h];
+	% TODO size vectKernel addapt to size roi ?
+    vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
+    [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
+    vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
+    [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
+    vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
+    
+	% returns a 1x3 dist vector
+    dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
+	% roi with smallest distance 
+    [bestBC, idx] = min(dists);
+    bestCRoi = cRois(idx,:);
+    bestVectCHist = vectCHists(:,idx);
+    
+    % compare Y & previous ROI
+    cRois(1,:) = bestCRoi;
+    cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2];
+    cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2];
+    cRois(4,:) = RoiTracked(i-1,:);
+    vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
+    [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
+    vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
+    [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
+    vectKernel = reshape( getMask(0, cRois(4,:), 'Epanechnikov'), [1, (cRois(4,3)+1)*(cRois(4,4)+1)]);
+    [dummy, vectCPreviousHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(4,:), settings);
+    vectCHists = [bestVectCHist, vectCSmallHist, vectCLargeHist, vectCPreviousHist];
+    
+    dists = histdists(vectTHist, vectCHists, 'bc', 'normalise');
+    [bestBC, idx] = min(dists);
+    bestCRoi = cRois(idx,:);
+    bestVectCHist = vectCHists(:,idx);
+    
 
-	% RoiTracked(i,:) = bestCRoi;
+	RoiTracked(i,:) = bestCRoi;
 
-    % Roi = RoiTracked(i,:);
-    % x = RoiTracked(i,1); y = RoiTracked(i,2); w = RoiTracked(i,3); h = RoiTracked(i,4);
+    Roi = RoiTracked(i,:);
+    x = RoiTracked(i,1); y = RoiTracked(i,2); w = RoiTracked(i,3); h = RoiTracked(i,4);
 
 end
 
