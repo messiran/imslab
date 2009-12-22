@@ -33,7 +33,7 @@ function frames = frameReader(settings)
             i
             switch lower(movieName) 
                 case {'voetbal'}
-                    sFile = sprintf('framesVoetbal/%08d.png',settings.frameRange(i));
+                    sFile = sprintf('framesVoetbal/Frame%04d.png',settings.frameRange(i));
                 case{'snowboard'}
                     sFile = sprintf('framesSnowboard/%08d.png',settings.frameRange(i));
                 case{'parachute'}
@@ -46,4 +46,6 @@ function frames = frameReader(settings)
         disp('done');
     end
 
+	disp('globalizing frames');
+	framesGlobal = frames;
 
