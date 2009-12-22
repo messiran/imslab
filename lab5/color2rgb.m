@@ -30,5 +30,7 @@ switch lower(settings.color)
         
     case {settings.COLOR.HSV}
         img = hsv2rgb(img);
+
 end
+img = uint8(round(img*255));
 
