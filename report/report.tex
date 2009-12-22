@@ -63,13 +63,16 @@
 
 		\subsubsection{normalised rgb}
 		normalised RGB is a colormodel which is invariant to illumination intensity, orientation of the object surface and also viewpoint invariant. 
+		The normalised RGB colorspace is 3-dimensional but since all 3 channels are divided by the intencity we have, r+g+b =1,, therefore it is overdetermined as a 3-dimensional system and can be described in 2 dimensions r,g, where b can be deduced through 1-(r+g).
 		normalised RGB is derived from RGB by deviding the reponse of each color channel by the intensity, thus creating an intensity invariant colorspace
 		\subsubsection{Hue}
 		The Hue is derived from a different color space, where a color is not described as the response of three RGB sensors but it is described as a Hue, which can be seen as a pure spectral color, saturation which describes how pure the color is, if it is fully satureated there is a pure spectral color, less saturated colors have more white mixed in. Last the intensity describes how bright the color is. 
+		The colorspace consisting of only Hue is 1-dimensional.
 		Hue is invariant to illumination and object and observer geometry and highlights. [quote invariant claim]
 	\subsection{Histogram}
-
-
+		We want to describe an image patch as a probability density function(pdf). This means that we could compare different image patches and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
+		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
+		Ideally the PDF  would take every color and describe its relative frequency.However this would lead to a pdf which is too sparse. Therefor we collect similar colors in bins and compare the relative frequencies of this more coarse color description. A problem with this is that too few bins would lead to a pdf which is too coarse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse, to be useful. 
 
 	\subsection{Brute force}
 		First the tracked object is modeled by computing a color histogram, the
@@ -88,24 +91,24 @@
 
 	
 	\subsection{Meanshift}
-	Mean shift is an algorithm that finds the most probable target position of a
-	tracked object in a frame.
+		Mean shift is an algorithm that finds the most probable target position of a
+		tracked object in a frame.
 
-	First a the tracked object is modeled by computing a color histogram.
-	Likewise on the same location but in the next frame an other color histogram is
-	computed.
+		First a the tracked object is modeled by computing a color histogram.
+		Likewise on the same location but in the next frame an other color histogram is
+		computed.
 
-	These two histograms are compared using a Bhattagarya distance measure. This
-	results in a weight image where high values represent pixels that are
-	simmilar.  For the intuition, when an object moved to the left, the weight
-	values will be high on the left side. Furthermore the weights will be low on
-	the right side because new information (different colors) entered the
-	searchwindow. 
+		These two histograms are compared using a Bhattagarya distance measure. This
+		results in a weight image where high values represent pixels that are
+		simmilar.  For the intuition, when an object moved to the left, the weight
+		values will be high on the left side. Furthermore the weights will be low on
+		the right side because new information (different colors) entered the
+		searchwindow. 
 
-	This is used to weight an image which contain relative locations
-	(where the origin is situated in the center of this image). This result in
-	an image where each pixel represents a weighted shift. It is easy to see
-	that the mean shift is the mean of this image.
+		This is used to weight an image which contain relative locations
+		(where the origin is situated in the center of this image). This result in
+		an image where each pixel represents a weighted shift. It is easy to see
+		that the mean shift is the mean of this image.
 	
 	% TODO 
 	%Above steps are done iteratively till a 
