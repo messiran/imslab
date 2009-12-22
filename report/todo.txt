@@ -1,0 +1,43 @@
+TESTING:
+parameters proberen
+different colormodels: hue, xyz, etc.
+brute force vs meanshift, explain differences
+
+
+REPORT:
+lots of pictures in the report
+
+
+
+Planning:
+MONDAY 
+finish code 
+test code 
+generate pictures for report
+chaptertitels for report
+
+-introduction
+-problem description
+-method (theory)
+	tracking
+	colormodels
+	meanshift
+	brute force
+	complexiteit
+
+-implementation (practical)
+
+-results
+	compare
+
+-conclusion
+-future work
+	dataset
+	kernel
+	optimalisations
+	trackingwindow size
+
+TUESDAY,
+write report
+
+
