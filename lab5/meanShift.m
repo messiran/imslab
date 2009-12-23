@@ -22,6 +22,8 @@ if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
 else 
 	if (exist('Roi.mat')==2)
 		load('Roi.mat');
+		% convert from downsampled to normal roi
+		Roi =  Roi * 2;
 	else
 		disp('loading default roi');
 		Roi = settings.defaultRoi;

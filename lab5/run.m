@@ -1,7 +1,7 @@
 close all
 warning on all
 
-fprintf('Define your colorspace \n  (0) RGB \n  (1) rg  \n  (2) Hue \n  (2) HSV \n');
+fprintf('Define your colorspace \n  (0) RGB \n  (1) XY \n  (2) rg\n  (3) Hue \n  (4) HS\n  (5) HSV \n');
 
 inpColor = input('');
 
