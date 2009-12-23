@@ -6,10 +6,11 @@ function frames = frameReader(settings)
     %frames = framesGlobal;
 
     % load frames from workspace if it exists
-    if exist('framesGlobal')==1 && ~isempty(framesGlobal) 
-        disp('loading frames from workspace');
-        frames = framesGlobal;
-    elseif(exist('frames.mat')==2 && settings.cache)
+
+    % if exist('framesGlobal')==1 && ~isempty(framesGlobal) 
+    %     disp('loading frames from workspace');
+    %     frames = framesGlobal;
+    if(exist('frames.mat')==2 && settings.cache)
         disp('loading frames.mat');
         load frames.mat;
         disp('done loading frames.mat');
