@@ -17,7 +17,7 @@ function saveMovie(RoiTracked, movieName, fps, quality, compression, settings)
 		% get tracking data
 		RoiTrack = RoiTracked(i,:);
 		% draw tracking data in frame
-		framesTracked(:,:,:,i) = frameDrawRect(color2rgb(settings.frames(:,:,:,i), settings), RoiTrack, [255, 255, 0]);
+		framesTracked(:,:,:,i) = frameDrawRect(color2rgb(settings.frames(:,:,:,i), settings), RoiTrack, settings.TrackColor);
 		if settings.saveAndShowMovie == 1
         	currMovie = addframe(currMovie, framesTracked(:,:,:,i));
 		end			

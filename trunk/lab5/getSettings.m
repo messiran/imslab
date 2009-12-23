@@ -21,10 +21,11 @@ function settings = getSettings(inpColor, inpGetRoi, inpN)
     settings.frameRange = 85:139;
     %settings.frameRange = 85:115;
 	settings.N = inpN;
-	settings.downSampleRate = 2;
+	settings.downSampleRate = 1;
 	settings.skipFramesStepsize = 1;
 	settings.saveAndShowMovie = 1;
 	settings.imageCropRange = 1:250;
+	settings.TrackColor = [0, 0, 0]; % black
 
 	switch(lower(settings.color))
 		case {settings.COLOR.H}
