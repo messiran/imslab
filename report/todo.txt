@@ -1,8 +1,9 @@
 TODO:
 
 Test (tjerk):
-make automatic testing script to test all different parameters
+make automatic testing script to test all different parameters [DONE]
 test on other scene (snowboard)
+test on brute force
 
 Cleanup code:
 -remove old unnecessary code
@@ -14,15 +15,14 @@ Cleanup code:
 Report:
 Write unfinished chapters:
 -Implementation
--Conclusions
+-Conclusions (tjerk)
 -Future work
 
 Read whole report:
 
 
 
-
-planning:
+planning old:
 Di avond:
 	Bart code opschonen
 	Bart evt nog aan scalable window
