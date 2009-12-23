@@ -16,6 +16,24 @@ test code
 generate pictures for report
 chaptertitels for report
 
+
+
+planning:
+
+Di avond:
+	Bart code opschonen
+	Bart evt nog aan scalable window
+Wo:
+	Tjerk resultaten en deel verslag
+Do:
+	Bart verslag afmaken, deadline 19u
+Do avond:
+	Tjerk 19u 1 uur latexen
+	Verslag nog een keer doornemen
+	
+
+
+
 -introduction
 -problem description
 -method (theory)
