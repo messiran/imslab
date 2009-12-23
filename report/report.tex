@@ -124,12 +124,39 @@ Here it is important to distinguish between the reflectance factor of a patch of
 
 \section{Results} 
 	\subsection{Experimental setup} 
-	different colorspaces
-	compare meanshift with brute force
-	images etc.
+	binsize is per colorchannel
 	\subsection{Brute force} 
 	\subsection{Meanshift} 
+
+	\begin{tabular}{l | l | l | l}
+		scene	& 	colorspace	& downsampled & keeped track with binsize & 4 & 8 & 16 & 32\\
+		\hline
+		soccer 	& 	RGB	 		& 1x		  &							  & + & + & +  &  -\\
+		soccer 	& 	RGB	 		& 1x		  &							  & + & + & +  &  -\\
+		soccer 	& 	rg	 		& 1x 		  &							  & + & + & +  &  -\\
+		soccer 	& 	H	 		& 1x		  &							  & + & + & +  &  -\\
+		soccer 	& 	HS	 		& 1x		  &							  & + & + & +  &  -\\
+		soccer 	& 	HSV	 		& 1x		  &							  & + & + & +  &  -\\
+		soccer 	& 	RGB	 		& 2x		  &							  & - & - & -  &  -\\
+		soccer 	& 	rg	 		& 2x 		  &							  & - & + & -  &  -\\
+		soccer 	& 	H	 		& 2x		  &							  & - & + & -  &  -\\
+		soccer 	& 	HS	 		& 2x		  &							  & - & + & -  &  -\\
+		soccer 	& 	HSV	 		& 2x		  &							  & - & - & -  &  -\\
+	\end{tabular}	
+
+	conclusions
+
+	%TODO compare with other scene
+	%make the comparison automatic, use wrapper function and write figure
+	%windows to file with binsize etc. as filename
 \subsection{Discussion} % discussion of results
+		performs bad on low binsize (obvious) and downsampled images (obvious)\\
+
+		performs bad on a very high (32) a binsize even with not downsampled
+		images, the high bin size causes to lose generalisation power (same object other pose)\\
+		
+		colorspace RGB and HSV only keeped track with a non downsampled image,
+		that is probably because it uses intensity i
 
 
 \section{Conclusions} \label{sec:conc}
@@ -138,6 +165,15 @@ Observe how you can improve your design and them describe how you implemented th
 
 e.g. a different color space or the number of bins in the histogram
 test the tracker also on a video of a domain other than soccer (or any other sport on a green field)
+
+% variable tracking window size 
+
+%TODO write something about kalman
+
+%TODO would be better to have a ground truth and compair the tracking
+%coordinates to the ground truth, no just a binary val (keeped track or not) is
+%used
+
 
 \section{References} 
 

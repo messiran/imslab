@@ -1,25 +1,28 @@
-TESTING:
-parameters proberen
-different colormodels: hue, xyz, etc.
-brute force vs meanshift, explain differences
+TODO:
+
+Test (tjerk):
+make automatic testing script to test all different parameters
+test on other scene (snowboard)
+
+Cleanup code:
+-remove old unnecessary code
+-remove old files
+-add comments
+-make it ready for handin
 
 
-REPORT:
-lots of pictures in the report
+Report:
+Write unfinished chapters:
+-Implementation
+-Conclusions
+-Future work
 
+Read whole report:
 
-
-Planning:
-MONDAY 
-finish code 
-test code 
-generate pictures for report
-chaptertitels for report
 
 
 
 planning:
-
 Di avond:
 	Bart code opschonen
 	Bart evt nog aan scalable window
@@ -32,30 +35,5 @@ Do avond:
 	Verslag nog een keer doornemen
 	
 
-
-
--introduction
--problem description
--method (theory)
-	tracking
-	colormodels
-	meanshift
-	brute force
-	complexiteit
-
--implementation (practical)
-
--results
-	compare
-
--conclusion
--future work
-	dataset
-	kernel
-	optimalisations
-	trackingwindow size
-
-TUESDAY,
-write report
 
 
