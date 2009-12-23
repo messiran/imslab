@@ -1,37 +1,19 @@
-function saveMovie(RoiTracked, movieName, fps, quality, compression, settings)
-	%global framesTracked;
-	saveMovie = 1;
+function saveMovie(framesTracked, movieName, fps, quality, compression, settings)
+% unix cannot compress
+if isunix
+	compression = 'None';
+end
 
-    % unix cannot compress
-    if isunix
-        compression = 'None';
-    end
-	if settings.saveAndShowMovie == 1
-		currMovie = avifile(movieName, 'fps', fps, 'quality', quality, 'Compression', compression);
-	end
+currMovie = avifile(movieName, 'fps', fps, 'quality', quality, 'Compression', compression);
 
-	% copy from frames
-    for i=1:size(settings.frames,4);
-		fprintf('Adding tracking data and writing frames   ');
-		fprintf('\b\b\b %4.1f%%\n', i/size(settings.frames, 4) * 100);
-		% get tracking data
-		RoiTrack = RoiTracked(i,:);
-		% draw tracking data in frame
-		framesTracked(:,:,:,i) = frameDrawRect(color2rgb(settings.frames(:,:,:,i), settings), RoiTrack, settings.TrackColor);
-		if settings.saveAndShowMovie == 1
-        	currMovie = addframe(currMovie, framesTracked(:,:,:,i));
-		end			
-    end
-	if settings.saveAndShowMovie == 1
-		currMovie = close(currMovie);
-	end			
+for i=1:size(framesTracked,4);
+	currMovie = addframe(currMovie, framesTracked(:,:,:,i));
+end
+currMovie = close(currMovie);
 
-
- 	thumbnailSize = 6;
- 	stepSize = 10;
- 
- 	disp('saving framesTracked..');
- 	save framesTracked.mat framesTracked
- 	montage(framesTracked(:,:,:,1:stepSize:thumbnailSize*stepSize));
-
+% play movie
+if isunix
+	!mplayer -fps 10 -msglevel all=-1 result.avi;
+elseif ispc
+	%!"C:\Program Files\VideoLAN\VLC\vlc.exe" result.avi;
 end

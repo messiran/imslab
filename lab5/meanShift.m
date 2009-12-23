@@ -1,4 +1,4 @@
-function meanShift(settings)
+function RoiTracked = meanShift(settings)
 
 %settings = getSettings();
 
@@ -23,7 +23,7 @@ else
 	if (exist('Roi.mat')==2)
 		load('Roi.mat');
 		% convert from downsampled to normal roi
-		Roi =  Roi * 2;
+		%Roi =  Roi * 2;
 	else
 		disp('loading default roi');
 		Roi = settings.defaultRoi;
@@ -135,11 +135,6 @@ end
 if settings.prof == settings.PROF.ON
 	profile viewer 
 end
-
-%imageFrame(settings.frames, RoiTracked)
-
-disp('saving movie...');
-saveMovie(RoiTracked, 'result.avi', 10, 100,'Cinepak', settings);
 
 
 
