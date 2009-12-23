@@ -3,7 +3,7 @@ warning on all
 
 fprintf('Define your colorspace \n  (0) RGB \n  (1) rg  \n  (2) Hue \n  (2) HSV \n');
 
-inpColor = input('')
+inpColor = input('');
 
 % if no input is given and settings is in workspace
 if length(inpColor)==0 
@@ -38,14 +38,19 @@ end
 if inpGetRoi == 1
 	delete Roi.mat
 end
+fprintf('Define your bin size (per colorchannel)\n');
+inpN = input('');
 
-settings = getSettings(inpColor, inpGetRoi);
+settings = getSettings(inpColor, inpGetRoi, inpN);
 disp('globalizing new settings');
+% perform mean shift
 meanShift( settings )
 
-% play movie
-if isunix
-	!mplayer -fps 10 -msglevel all=-1 result.avi;
-elseif ispc
-    %!"C:\Program Files\VideoLAN\VLC\vlc.exe" result.avi;
+if settings.saveAndShowMovie == 1
+	% play movie
+	if isunix
+		!mplayer -fps 10 -msglevel all=-1 result.avi;
+	elseif ispc
+		%!"C:\Program Files\VideoLAN\VLC\vlc.exe" result.avi;
+	end
 end

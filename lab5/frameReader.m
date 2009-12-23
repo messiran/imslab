@@ -25,14 +25,18 @@ function frames = frameReader(settings)
         end
 
         % declare frames for optimization
-		frame = rgb2color(im2double(imread(sFile)), settings);
+		frame = im2double(imread(sFile));
+		% crop image
+		frame = frame(settings.imageCropRange,settings.imageCropRange,:);
+		% downsample
 		frame = frame(1:settings.downSampleRate:end,1:settings.downSampleRate:end,:);
+		frame = rgb2color(frame, settings);
 		[m,n,p] = size(frame);
 
         frames = zeros([m, n, p, length(settings.frameRange)]);
 
 		fprintf('progress %02.1f%%\n', 0);
-        for i = 1:length(settings.frameRange)
+        for i = 1:settings.skipFramesStepsize:length(settings.frameRange)
             fprintf('\b\b\b\b\b\b %4.1f%%', i/length(settings.frameRange) * 100);
             switch lower(movieName) 
                 case {'voetbal'}
@@ -42,11 +46,16 @@ function frames = frameReader(settings)
                 case{'parachute'}
                     sFile = sprintf('framesParachute/%08d.png',settings.frameRange(i));
             end
-            frame = rgb2color(im2double(imread(sFile)), settings);
+			frame = im2double(imread(sFile));
+			% crop image
+			frame = frame(settings.imageCropRange,settings.imageCropRange,:);
 			% downsample
-            frames(:,:,:,i) = frame(1:settings.downSampleRate:end,1:settings.downSampleRate:end,:);
+			frame = frame(1:settings.downSampleRate:end,1:settings.downSampleRate:end,:);
+            frame = rgb2color(frame, settings);
+            frames(:,:,:,i) = frame;
         end
-        disp('\nsaving to frames.mat...');
+		disp('');
+        disp('saving to frames.mat...');
         save frames.mat frames;
         disp('done');
     end
