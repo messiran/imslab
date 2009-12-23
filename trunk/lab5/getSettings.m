@@ -1,4 +1,4 @@
-function settings = getSettings(inpColor, inpGetRoi)
+function settings = getSettings(inpColor, inpGetRoi, inpN)
     %% Variables
     % settings controling process flow
 
@@ -19,8 +19,12 @@ function settings = getSettings(inpColor, inpGetRoi)
 	settings.movieName = 'voetbal';
     %settings.frameRange = 3147:3247;
     settings.frameRange = 85:139;
-	settings.N = 16;
+    %settings.frameRange = 85:115;
+	settings.N = inpN;
 	settings.downSampleRate = 2;
+	settings.skipFramesStepsize = 1;
+	settings.saveAndShowMovie = 1;
+	settings.imageCropRange = 1:250;
 
 	switch(lower(settings.color))
 		case {settings.COLOR.H}
