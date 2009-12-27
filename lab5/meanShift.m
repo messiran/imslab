@@ -1,23 +1,23 @@
 function RoiTracked = meanShift(settings)
-
+%MEANSHIFT track an object using meanShift
+% ROITRACKED = MEANSHIFT(SETTINGS)
+% ROITRACKED = an array of roi's[x,y,w,h] as tracked by meanshift 
+% SETTINGS = settings structure (see getSettings.m)  
 
 % get target image (first frame)
 imgT = settings.frames(:,:,:,1);
+% get region of interest and extract the sizes
 Roi = settings.Roi;
-x = Roi(1); y = Roi(2); w = Roi(3); h = Roi(4);
+w = Roi(3); h = Roi(4);
 
+% start filling the resulting track
 RoiTracked(1,:) = Roi;
 
-%% get weighting kernel for historgram counts
-
-kernel = getMask(0, Roi, 'Epanechnikov');
-% TODO reshape to column vector in a stand alone function
-vectKernel = reshape(kernel, [1, (w+1)*(h+1)]);
-
-[dummy,vectTHist] = getHist(vectKernel, imgT, Roi, settings);
+%% get weighting kernel for histogram counts
+[dummy,vectTHist] = getHist(imgT, Roi, settings);
 
 % location filter (e.g. -2 -1 0 1 2)
-locMask = getMask(2, Roi, 'location');
+locMask = getMask(Roi, 'location');
 
 previousBC = 0;
 
@@ -31,8 +31,7 @@ for i = 2:size(settings.frames, 4)
 	% perform shift till shift is negligible 
 	while(max(abs(shift))>=0.5)
 		% get candidate image
-        vectKernel = reshape(getMask(0, Roi, 'Epanechnikov'), [1, (w+1)*(h+1)]);
-		[vectCLoc, vectCHist] = getHist(vectKernel, imgC, Roi, settings);
+		[vectCLoc, vectCHist] = getHist(imgC, Roi, settings);
 		
 		% candidate model
 		Pu = vectCHist;
@@ -50,7 +49,7 @@ for i = 2:size(settings.frames, 4)
 		W = Wbin(vectCLoc);
 
 		% duplicate W 2 times in the width dim
-        locMask = getMask(2, Roi, 'location');
+        locMask = getMask(Roi, 'location');
 		shift = sum((W * ones(1,2)).*locMask) / sum(W);
 		
         Roi(1:2) = round(Roi(1:2)+shift); 
@@ -67,10 +66,8 @@ for i = 2:size(settings.frames, 4)
     % cRois(2,:) = [Roi(1)+1,Roi(2), w-2, h];
     % cRois(3,:) = [Roi(1)-1,Roi(2), w+2, h];
 	% % TODO size vectKernel addapt to size roi ?
-    % vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    % [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    % [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
+    % [dummy, vectCSmallHist] = getHist(settings.frames(:,:,:,i), cRois(2,:), settings);
+    % [dummy, vectCLargeHist] = getHist(settings.frames(:,:,:,i), cRois(3,:), settings);
     % vectCHists = [vectCHist, vectCSmallHist, vectCLargeHist];
     % 
 	% % returns a 1x3 dist vector
@@ -85,11 +82,8 @@ for i = 2:size(settings.frames, 4)
     % cRois(2,:) = [bestCRoi(1),bestCRoi(2)+1, w, h-2];
     % cRois(3,:) = [bestCRoi(1),bestCRoi(2)-1, w, h+2];
     % cRois(4,:) = RoiTracked(i-1,:);
-    % vectKernel = reshape( getMask(0, cRois(2,:), 'Epanechnikov'), [1, (cRois(2,3)+1)*(cRois(2,4)+1)]);
-    % [dummy, vectCSmallHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(2,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(3,:), 'Epanechnikov'), [1, (cRois(3,3)+1)*(cRois(3,4)+1)]);
-    % [dummy, vectCLargeHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(3,:), settings);
-    % vectKernel = reshape( getMask(0, cRois(4,:), 'Epanechnikov'), [1, (cRois(4,3)+1)*(cRois(4,4)+1)]);
+    % [dummy, vectCSmallHist] = getHist(settings.frames(:,:,:,i), cRois(2,:), settings);
+    % [dummy, vectCLargeHist] = getHist(settings.frames(:,:,:,i), cRois(3,:), settings);
     % [dummy, vectCPreviousHist] = getHist(vectKernel, settings.frames(:,:,:,i), cRois(4,:), settings);
     % vectCHists = [bestVectCHist, vectCSmallHist, vectCLargeHist, vectCPreviousHist];
     % 
@@ -110,16 +104,3 @@ end
 if settings.prof == settings.PROF.ON
 	profile viewer 
 end
-
-
-
-% todo herhistogrammen (bij min distance opnieuw histogram berekenen???
-% (regiondimensions aanpassen??))
-% lokatie voorspellen mean shift
-
-% gaus op colorimportance en locatie? mag dit met mean shift?
-% learning rate
-
-% EPANECHNIKOV DOES NOT SUM TO 1!!!
-
-% TODO: try different scales, e.g. if a player runs away he gets smaller
