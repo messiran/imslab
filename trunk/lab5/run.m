@@ -5,9 +5,12 @@ warning on all
 %delete frames.mat;
 %delete Roi.mat
 
-paramsN = [4, 8];
-paramsColor = [0, 1];
-inpGetRoi = 0;
+%paramsN = [4, 8];
+%paramsColor = [0, 1];
+paramsN = [4]
+paramsColor = [1]
+inpGetRoi = 1;
+warning off 
 
 for b = 1:length(paramsColor)
 	clear framesGlobal;

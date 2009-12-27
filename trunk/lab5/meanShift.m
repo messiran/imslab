@@ -1,34 +1,9 @@
 function RoiTracked = meanShift(settings)
 
-%settings = getSettings();
-
-%read frames
-%frames = settings.frames;
 
 % get target image (first frame)
 imgT = settings.frames(:,:,:,1);
-
-%% get region of interest
-if (settings.getRoi == settings.GETROI.ON && (exist('Roi.mat')~=2))
-    handle = figure('Visible','off');
-    imshow(color2rgb(imgT,settings));
-    rect = getrect(handle);
-    Roi =  [floor(rect(1)),...
-            floor(rect(2)),...
-            floor(rect(3)),...
-            floor(rect(4))];
-	save('Roi.mat', 'Roi');
-    close(handle);
-else 
-	if (exist('Roi.mat')==2)
-		load('Roi.mat');
-		% convert from downsampled to normal roi
-		%Roi =  Roi * 2;
-	else
-		disp('loading default roi');
-		Roi = settings.defaultRoi;
-	end
-end
+Roi = settings.Roi;
 x = Roi(1); y = Roi(2); w = Roi(3); h = Roi(4);
 
 RoiTracked(1,:) = Roi;
