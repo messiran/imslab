@@ -23,7 +23,7 @@ for b = 1:length(paramsColor)
 		inpN = paramsN(a);
 
 		disp('create settings');
-		settings = getSettings(inpColor, inpGetRoi, inpN);
+		settings = getSettings('color',inpColor, 'getRoi',inpGetRoi, 'N',inpN);
 		disp('done'); 
 		% perform mean shift
 
