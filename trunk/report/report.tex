@@ -12,6 +12,7 @@
 % \usepackage{amsmath, amsthm, amssymb}
 \usepackage[english]{babel}
 \usepackage{url}
+\usepackage{dsfont}
 
 \title{Mean shift object tracking\\ Lab report for IMS}
 \date{}
@@ -28,7 +29,7 @@ Rt Hon David Davis MP, June 12 2008, speech:"It is incumbent upon me to take a s
 \url{http://youtube-global.blogspot.com/2009/06/mobile-uploads-to-youtube-increase_5122.html}}. 
 	From such facts, it is clear that the increasing signifance of video content, ranging from the practical to recreational, is undeniable. This plethora of video content makes automated video analysis desirable. Ideally we would like to analyse videos to be able to extract their content. This includes making them accessible for search or to alert the viewer of important developments. One of these analyses is tracking an object through multiple frames of video.
 
-Generally, tracking can be done in two distinct manners; model based and appearance based. 
+In this paper tracking is understood as identifying an object at a location in a video frame that is consistent with locations found in previous video frames, given an object description. An example of a inconsistent location would be that of an object previously on the left side between frames jumped to the right side of the videoframe. Generally, tracking can be done in two distinct manners; model based and appearance based. 
 The former approach begins by building a substantial descriptive model of the object to be tracked. One can think of a wireframe model of the object together with texture or color information. In every frame this model is searched for, and the location that resembles the model best is the location of the relevant object.  A problem with this approach is that a substantial descriptive model has to be constructed for every conceivable object to be tracked.  Because of this tedious task, this approach can only be applied to small specialized domains.  
 
 This paper, however, will analyse an instance of the latter, appearance based, approach. This approach does not build a full model for tracking, but rather it looks at the appearance of an object and searches for regions that appear the same.  This is thus not a substancial descriptive model; rather it is an appearance based model. The underlying assumption behind this way of tracking is that small local features of the tracked object appear the same over multiple frames. %One such feature is color.
@@ -94,10 +95,56 @@ H = arctan\left(\frac{\sqrt{3}\,(G-B)}{(R-G)+(R-B)}\right)
 \end{equation} 
 		 
 \subsection{Histogram}
-		We want to describe an image patch as a probability density function(pdf). This means that we could compare different image patches and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
-		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
-		Ideally the PDF  would take every color and describe its relative frequency.However this would lead to a pdf which is too sparse. Therefor we collect similar colors in bins and compare the relative frequencies of this more coarse color description. A problem with this is that too few bins would lead to a pdf which is too coarse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse, to be useful. 
+In the previous section various color models and their invariant properties were discussed. Once a color model has been chosen the problem of describing an object as well as identifying an object in a videoframe given the object description and it's location in previous videoframes needs to be addressed. This problem can be conquerd with the use of histograms, this section describes, histograms as a probability density function over a color space. 
+
+We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a probability density function(PDF) over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the description of our object. The description however is not object orientation invariant since different sides of an object can have different colors. 
+
+A PDF as described above creates a function over the whole color space, (for RGB if every color channel is described by a byte this leads to $2^{24}$ different colors), this will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this paper the sizes of the bins can be considered fixed, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield a local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, the problem of picking the right bin size remains, too large bins would lead to a PDF which is too coarse, too small to a PDF that is too sparse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse.  
+
 \subsubsection{Epanechnikov Weighting}
+Histograms as described till now weight every color in an image region equally. However it is reasonable to assume that the color near center of the region is more important than the color near the borders. Therefore a weighting kernel is used which assigns a larger importance to colors near the center, while colors near the borders are weighted less. 
+
+The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}. Where, "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathds{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}.
+Let $x$ be a location then the Epanechnikov profile is
+
+\begin{equation}
+\label{eq:epanechnikov_profile}
+k_E(x) = \left\{ \begin{array}{cl}
+  1-x & \textrm{if } 0 \leq x \leq 1\\
+  0 & \textrm{if }  x > 1 ,\end{array}\right.
+\end{equation}
+with a subsequent radially symmetric kernel in 2 dimensions
+
+\begin{equation}
+\label{eq:epanechnikov_kernel1}
+K_E(x) = \left\{ \begin{array}{cl}
+  \frac{2}{\pi} (1-\|x\|^2) & \textrm{if } \|x\| \leq 1 \\
+  0 & \textrm{otherwise.} \end{array}\right.
+\end{equation}
+Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a pixel location, such that we get
+\begin{equation}
+\label{eq:epanechnikov_kernel2}
+K_E(x) = \left\{ \begin{array}{cl}
+  \frac{2}{\pi} (1-\sqrt{x_1^2 + x_2^2}^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
+  0 & \textrm{otherwise.} \end{array}\right.
+\end{equation}
+Now we simplify
+\begin{equation}
+\label{eq:epanechnikov_kernel2}
+K_E(x) = \left\{ \begin{array}{cl}
+  \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
+  0 & \textrm{otherwise} \end{array}\right.
+\end{equation}
+
+Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
+
+
+
+
+%TODO is local color descriptor introduced properly?
+
+%When the color in an image patch is described as a probability density function(pdf),  a comparison between different image patches can be made, given a difference measure for probability density functions. and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
+		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
 \subsubsection{Bhattacharyya Distance}
 		
 \subsection{Meanshift}
