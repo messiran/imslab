@@ -5,7 +5,7 @@
 %% vi: set tabs top=2, set textwidth=80
 \documentclass[a4paper,11pt]{article}
 
-\usepackage{homework}
+%\usepackage{homework}
 % \usepackage{graphicx, subfigure}
 % \usepackage{verbatim}
 % \usepackage{algorithm, algorithmic}
@@ -14,47 +14,48 @@
 \usepackage{url}
 
 \title{Mean shift object tracking\\ Lab report for IMS}
-
 \date{}
-
 \begin{document}
 \maketitle 
+
 \section{Introduction}
 	Videos are ubiquitous; in the United Kingdom it has been claimed that there is one observation camera per 14 citizens \footnote{
-Rt Hon David Davis MP, June 12 2008, speech:"It is incumbent upon me to take a stand"\\
+Rt Hon David Davis MP, June 12 2008, speech:"It is incumbent upon me to take a stand" 
 \url{http://www.conservatives.com/News/Speeches/2008/06/David_Davis_It_is_incumbent_upon_me_to_take_a_stand.aspx}
-}. YouTube.com the largest video website in the USA with a marketshare of 40\% of all watched online videos serves more than 10 Billion movies a month \footnote{comScore Video Metrix, August 2009\\
-\url{http://comscore.com/Press_Events/Press_Releases/2009/9/Google_Sites_Surpasses_10_Billion_Video_Views_in_August}}
-	Furthermore, the amount of videos uploaded to the site through mobile phones is growing exponentially \footnote{The Official YouTube Blog, June 25 2009, blogpost:"Mobile Uploads to YouTube Increase Exponentially"\\
-\url{http://youtube-global.blogspot.com/2009/06/mobile-uploads-to-youtube-increase_5122.html}} 
-	\textit{From these facts, it is clear that the importance of video content, ranging from security to leisure, is increasingly not-ignorable/socially significant THESAURUS} This plethora of video content makes automated video analysis desirable. Ideally we would like to analyse videos to be able to extract their content, for instance, in order to make them accessible for search or to alert the viewer of important developments. One of these analyses is tracking an object through multiple frames of video.
+}. YouTube.com, the largest video website in the USA with a marketshare of 40\% of all watched online videos serves more than 10 Billion movies a month\footnote{comScore Video Metrix, August 2009 
+\url{http://comscore.com/Press_Events/Press_Releases/2009/9/Google_Sites_Surpasses_10_Billion_Video_Views_in_August}}.
+	Furthermore, the amount of videos uploaded to the site through mobile phones is growing exponentially \footnote{The Official YouTube Blog, June 25 2009, blogpost:"Mobile Uploads to YouTube Increase Exponentially" 
+\url{http://youtube-global.blogspot.com/2009/06/mobile-uploads-to-youtube-increase_5122.html}}. 
+	From such facts, it is clear that the increasing signifance of video content, ranging from the practical to recreational, is undeniable. This plethora of video content makes automated video analysis desirable. Ideally we would like to analyse videos to be able to extract their content. This includes making them accessible for search or to alert the viewer of important developments. One of these analyses is tracking an object through multiple frames of video.
 
-	Generally, tracking can be done in two distinct manners; \textit{The first approach begins by building a model of the object to be tracked.} TO REPLACE [First, a model of the object to be tracked is built.] One can think of a wireframe model of the object together with texture or color information. 
-	In every frame this model is searched for, and the location that resembles the model best is the location of the relevant object. A problem with this approach is that a model \textit{has to be constructed} for every conceivable object to be tracked.  Because of this tedious task, this approach can only be applied to small specialized domains. \\
-	The second approach does not build a full model, but rather it looks at the appearance of an object and searches for regions that appear the same. This is thus not a fully descriptive model; rather it is an appearance based model. \textit{Why do you bring up these terms descriptive and appearance? Explain what they mean. And is the first approach an appearance based model?}
-	The underlying assumption behind this way of tracking is that small local features of the tracked object appear the same over multiple frames. One such feature is color.
+Generally, tracking can be done in two distinct manners; model based and appearance based. 
+The former approach begins by building a substantial descriptive model of the object to be tracked. One can think of a wireframe model of the object together with texture or color information. In every frame this model is searched for, and the location that resembles the model best is the location of the relevant object.  A problem with this approach is that a substantial descriptive model has to be constructed for every conceivable object to be tracked.  Because of this tedious task, this approach can only be applied to small specialized domains.  
 
-	This paper will present and compare methods within the appearance based tracking paradigm; namely the color based mean-shift tracker and brute-force tracker. 
-	Since color is the feature that will be tracked, different color models will be presented and applied. Following this, subsequent tracking results on different videos for both trackers will be discussed.
-	Specifically, we want to focus on the mean-shift tracker and explain through experiments how the tracker behaves under varying video conditions (such as occlusion and objects of varying scales), and what the influence of the used color model is.
-	As said at the beginning of this section, videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will, therefore, also be discussed. \\
-\textit{I cannot figure out how to reconcile the goal of the paper with how you have structured it. They dont even seem to be saying the same thing. How does this way of structuring it help you to explain your discussion?}
+This paper, however, will analyse an instance of the latter, appearance based, approach. This approach does not build a full model for tracking, but rather it looks at the appearance of an object and searches for regions that appear the same.  This is thus not a substancial descriptive model; rather it is an appearance based model. The underlying assumption behind this way of tracking is that small local features of the tracked object appear the same over multiple frames. %One such feature is color.
+The appearance based tracker discussed in this paper is the mean-shift tracker. 
+
+Color is the feature that will be tracked, so different color models will be presented and applied. Following this, subsequent tracking results on different videos for both trackers will be discussed. Specifically, we want to explain through experiments how the mean-shift tracker behaves under varying video conditions (such as occlusion and objects of varying scales), and what the influence of the used color model is.
+	As said at the beginning of this section, videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will, therefore, also be discussed. 
+	
 	This paper is organised as follows:  after the introduction of the topic in section 1, the theory behind the used trackers and colorspaces will be discussed in section 2.
 	Section 3 will be devoted to the implementation of the presented theories. The experimental setup, a description of the data, subsequent results and their discussion will be presented in section 4. 
 	Finally, section 5 will present the main conclusions on color based mean shift tracking.
 
 \section{Theory}	
-	This section will explain the main theories used in developing the mean shift tracker, \textit{so you do not compare to brute force tracker} 
-	\subsection{Colorspaces}
-		It was previewed in the introduction that an object would be tracked by its appearance, and that the feature used to do so would be color. In this section we will describe three different color models and their relevance to appearance based tracking, but first we will discuss some general properties of color.
+	This section will explain the main theories used in the mean shift tracker. The color of an object is dependent on what we can call the intrinsic color of the object and other factors such as lighting. Because the tracker will track an object on its color, it is important to choose a color space that is invarient to all factors except the instrinsic color of the object. Therefore in the following section, colorspaces in general as well as some specific colorspaces and their invarient properties will be introduced. Following this, histograms, which are probabilistic descriptions, or probability density functions (PDF), of color in image regions, will be discussed. We can compare PDFs using certain distance measures, which enables us to find color similarities between image regions. These concepts are integral to understanding the mean-shift tracker, which will be discussed afterwards. For an interesting comparison, the simpler brute force tracker willl be briefly discussed last.  
 
-The color a camera detects is dependent on the Spectral Power Distribution(SPD) of the light source, the reflectance factor of a patch of the object, the color matching functions of the camera sensors and the geometric arrangement of the lightsource(s), the object and the observer. The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor  describes how much each part of the spectrum gets reflected and how much gets absorbed by the object. The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangement also influences the color \cite{gevers_color}.
+%DONE TILL HERE
+
+\subsection{Colorspaces}
+%		It was previewed in the introduction that an object would be tracked by its appearance, and that the feature used to do so would be color. In this section we will describe three different color models and their relevance to appearance based tracking, but first we will discuss some general properties of color.
+
+The color a camera detects is dependent on the Spectral Power Distribution (SPD) of the light source, the reflectance factor of a patch of the object, the color matching functions of the camera sensors and the geometric arrangement of the lightsource(s), the object and the observer. The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor  describes how much each part of the spectrum gets reflected and how much gets absorbed by the object. The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangement also influences the color \cite{gevers_color}.
 
 Here it is important to distinguish between the reflectance factor of a patch of an object, and the appearance of this patch's color to a camera. All factors described above influence the appearance of the patch, however the reflectance factor stays constant. Therefore, we want to track an object based on its reflectance factor since this is the only factor intrinsic to the object.  Hence, we want to have a color model which is ideally invariant to all factors that influence the appearance of the object except for the reflectance factor.  
 
-		\subsubsection{RGB}
+\subsubsection{RGB}
 		
-		All percievable colors can, based on trichromacy theory  \cite{gevers_color}, be modeled by the response of three sensors. 
+		All percievable colors can, based on trichromacy theory \cite{gevers_color}, be modeled by the response of three sensors. 
 		
 		RGB is a standard colorspace used in computer vision, which desribes the detected colors as a tri-stimulus, (R,G,B). Where R corresponds the response of the Red sensor, which is most sensitive to Red, G to the response of the green sensor and B to the resonse of the Blue sensor.
 
@@ -64,55 +65,35 @@ Here it is important to distinguish between the reflectance factor of a patch of
 		
 
 		
-
-		\subsubsection{Normalised RGB}
-		normalised RGB is a colormodel which is invariant to illumination intensity, orientation of the object surface and also viewpoint invariant. 
+\subsubsection{Normalised RGB}
+		Normalised RGB is a colormodel which is invariant to illumination intensity, orientation of the object surface and also viewpoint invariant. 
 		The normalised RGB colorspace is 3-dimensional but since all 3 channels are divided by the intencity we have, r+g+b =1,, therefore it is overdetermined as a 3-dimensional system and can be described in 2 dimensions r,g, where b can be deduced through 1-(r+g).
 		normalised RGB is derived from RGB by deviding the reponse of each color channel by the intensity, thus creating an intensity invariant colorspace
-		\subsubsection{Hue}
+		
+\subsubsection{Hue}
 		The Hue is derived from a different color space, where a color is not described as the response of three RGB sensors but it is described as a Hue, which can be seen as a pure spectral color, saturation which describes how pure the color is, if it is fully satureated there is a pure spectral color, less saturated colors have more white mixed in. Last the intensity describes how bright the color is. 
 		The colorspace consisting of only Hue is 1-dimensional.
 		Hue is invariant to illumination and object and observer geometry and highlights. [quote invariant claim]
-	\subsection{Histogram}
+\subsection{Histogram}
 		We want to describe an image patch as a probability density function(pdf). This means that we could compare different image patches and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
 		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
 		Ideally the PDF  would take every color and describe its relative frequency.However this would lead to a pdf which is too sparse. Therefor we collect similar colors in bins and compare the relative frequencies of this more coarse color description. A problem with this is that too few bins would lead to a pdf which is too coarse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse, to be useful. 
-
-	\subsection{Brute force}
-		First the tracked object is modeled by computing a color histogram, the
-		target model.
-		In the next frame a new color histogram is computed on every location,
-		these are the candidate models.
-		The target model is compared with all candidate models using a distance
-		measure. The new location is determined by the location of the candidate
-		histogram with the lowest distance.
+\subsubsection{Epanechnikov Weighting}
+\subsubsection{Bhattacharyya Distance}
 		
-		\subsubsection{Semi Brute force}
-		Using the fact that we work with 25 frames every second and objects are moving
-		within a maximum speed, an assumption can be made that the object
-		location should be close to the previous location. This optimization
-		ignores a lot of unnecessary computations.
+\subsection{Meanshift}
+Mean shift is an algorithm that finds the most probable target position of a tracked object in a frame. First a the tracked object is modeled by computing a color histogram. Likewise on the same location but in the next frame an other color histogram is computed. These two histograms are compared using a Bhattagarya distance measure. This results in a weight image where high values represent pixels that are similar.  For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
+This is used to weight an image which contain relative location (where the origin is situated in the center of this image). This result in an image where each pixel represents a weighted shift. It is easy to see that the mean shift is the mean of this image.
+
+\subsection{Brute force}
+So we are talkign about this because it is interstingly silly. We want to say meanshift tracker is less computationally complex and therefore faster. 
+First the tracked object is modeled by computing a color histogram; the target model. In the next frame a new color histogram is computed on every location; these are the candidate models. The target model is compared with all candidate models using a distance measure. The new location is determined by the location of the candidate histogram with the lowest distance.
+		
+\subsubsection{Semi Brute force}
+Using the fact that we work with 25 frames every second and objects are moving within a maximum speed, an assumption can be made that the object location should be close to the previous location. This optimization ignores a lot of unnecessary computations.
 
 	
-	\subsection{Meanshift}
-		Mean shift is an algorithm that finds the most probable target position of a
-		tracked object in a frame.
 
-		First a the tracked object is modeled by computing a color histogram.
-		Likewise on the same location but in the next frame an other color histogram is
-		computed.
-
-		These two histograms are compared using a Bhattagarya distance measure. This
-		results in a weight image where high values represent pixels that are
-		simmilar.  For the intuition, when an object moved to the left, the weight
-		values will be high on the left side. Furthermore the weights will be low on
-		the right side because new information (different colors) entered the
-		searchwindow. 
-
-		This is used to weight an image which contain relative locations
-		(where the origin is situated in the center of this image). This result in
-		an image where each pixel represents a weighted shift. It is easy to see
-		that the mean shift is the mean of this image.
 	
 	% TODO 
 	%Above steps are done iteratively till a 
@@ -149,19 +130,19 @@ Here it is important to distinguish between the reflectance factor of a patch of
 		soccer 	& 	HSV	 		& 2x		  &			bla				  & - & - & -  &  -\\
 	\end{tabular}	
 
-	\subsubsection{conclusions}
+\subsubsection{Conclusions}
 
 	%TODO compare with other scene
 	%make the comparison automatic, use wrapper function and write figure
 	%windows to file with binsize etc. as filename
 \subsection{Discussion} % discussion of results
-		performs bad on low binsize (obvious) and downsampled images (obvious)\\
+performs bad on low binsize (obvious) and downsampled images (obvious)\\
 
-		performs bad on a very high (32) a binsize even with not downsampled
-		images, the high bin size causes to lose generalisation power (same object other pose)\\
+performs bad on a very high (32) a binsize even with not downsampled
+images, the high bin size causes to lose generalisation power (same object other pose)\\
 		
-		colorspace RGB and HSV only keeped track with a non downsampled image,
-		that is probably because it uses intensity i
+colorspace RGB and HSV only keeped track with a non downsampled image,
+that is probably because it uses intensity i
 
 
 \section{Conclusions} \label{sec:conc}
