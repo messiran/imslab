@@ -95,17 +95,17 @@ H = arctan\left(\frac{\sqrt{3}\,(G-B)}{(R-G)+(R-B)}\right)
 \end{equation} 
 		 
 \subsection{Histogram}
-In the previous section various color models and their invariant properties were discussed. Once a color model has been chosen the problem of describing an object as well as identifying an object in a videoframe given the object description and it's location in previous videoframes needs to be addressed. This problem can be conquerd with the use of histograms, this section describes, histograms as a probability density function over a color space. 
+In the previous section various color models and their invariant properties were discussed. Once a color model has been chosen the problem of describing an object as well as identifying an object in a videoframe given the object description and it's location in previous videoframes needs to be addressed. This problem can be conquerd with the use of histograms, this section describes, histograms as a probability density function(PDF) over a color space. In further sections the Histograms or PDFs that represent the object to be tracked will be called the target model.
 
-We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a probability density function(PDF) over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the description of our object. The description however is not object orientation invariant since different sides of an object can have different colors. 
+We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a PDF over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the description of our object. The description however is not object orientation invariant since different sides of an object can have different colors. 
 
 A PDF as described above creates a function over the whole color space, (for RGB if every color channel is described by a byte this leads to $2^{24}$ different colors), this will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this paper the sizes of the bins can be considered fixed, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield a local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, the problem of picking the right bin size remains, too large bins would lead to a PDF which is too coarse, too small to a PDF that is too sparse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse.  
 
 \subsubsection{Epanechnikov Weighting}
-Histograms as described till now weight every color in an image region equally. However it is reasonable to assume that the color near center of the region is more important than the color near the borders. Therefore a weighting kernel is used which assigns a larger importance to colors near the center, while colors near the borders are weighted less. 
+Histograms as described till now weight every color in an image region equally. However it is reasonable to assume that the color near the center of the region is more important than the color near the borders. Therefore a weighting kernel is used which assigns a larger importance to colors near the center, while colors near the borders are weighted less. 
 
 The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}. Where, "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathds{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}.
-Let $x$ be a location then the Epanechnikov profile is
+Let $x$ be a normalised location, such that the borders ouf our image region lay at distance 1. then the Epanechnikov profile is
 
 \begin{equation}
 \label{eq:epanechnikov_profile}
@@ -113,6 +113,7 @@ k_E(x) = \left\{ \begin{array}{cl}
   1-x & \textrm{if } 0 \leq x \leq 1\\
   0 & \textrm{if }  x > 1 ,\end{array}\right.
 \end{equation}
+
 with a subsequent radially symmetric kernel in 2 dimensions
 
 \begin{equation}
@@ -121,14 +122,7 @@ K_E(x) = \left\{ \begin{array}{cl}
   \frac{2}{\pi} (1-\|x\|^2) & \textrm{if } \|x\| \leq 1 \\
   0 & \textrm{otherwise.} \end{array}\right.
 \end{equation}
-Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a pixel location, such that we get
-\begin{equation}
-\label{eq:epanechnikov_kernel2}
-K_E(x) = \left\{ \begin{array}{cl}
-  \frac{2}{\pi} (1-\sqrt{x_1^2 + x_2^2}^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
-  0 & \textrm{otherwise.} \end{array}\right.
-\end{equation}
-Now we simplify
+Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we get
 \begin{equation}
 \label{eq:epanechnikov_kernel2}
 K_E(x) = \left\{ \begin{array}{cl}
@@ -138,20 +132,35 @@ K_E(x) = \left\{ \begin{array}{cl}
 
 Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
 
+The Epanechnikov kernel is used because the derivative of the profile equals $-1$, which makes the derivation and implementation of the mean shift tracker less troublesome than with an other kernel though kernels such as Gaussians are feasable.
 
+\subsubsection{Bhattacharyya Distance}
+Multiple local color feature descriptors need to be compared to find the one that most closely resembles our description of the object we are tracking. Since the local feature descriptors are PDFs we need a similarity or distance measure between PDFs. One such distance is the Bhattacharyya distance, which for discrete distributions is defined as:
 
+\begin{equation}
+\label{eq:bhattdistance}
+d(p,q) = \sqrt{1-\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}}.
+\end{equation}
+where $m$ denotes the number of bins, $p$ and $q$ are two discrete PDFs and $p(u)$ is the probability density for bin $u$ in PDF $p$. 
+
+Intuitively it can be seen that when both $p$ and $q$ are similar, $\sqrt{p(u)\cdot q(u)}$ will be large for bins where both have accumulated a large probability mass, therefore, $d(p,q)$ will be small. When two PDFs are dissimilar, none of the bins with a large probability mass will match up, therefore  $\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}$ will be small, and $d(p,q)$ will be close to 1.
 
 %TODO is local color descriptor introduced properly?
 
-%When the color in an image patch is described as a probability density function(pdf),  a comparison between different image patches can be made, given a difference measure for probability density functions. and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
-		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
-\subsubsection{Bhattacharyya Distance}
+%When the color in an image patch is described as a probability density function(pdf),  a comparison between different image patches can be made, given a difference measure for probability density functions. and a measure of similarity would be how much both distributions look alike 
+
 		
 \subsection{Meanshift}
 Mean shift is an algorithm that finds the most probable target position of a tracked object in a frame. First a the tracked object is modeled by computing a color histogram. Likewise on the same location but in the next frame an other color histogram is computed. These two histograms are compared using a Bhattagarya distance measure. This results in a weight image where high values represent pixels that are similar.  For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
 This is used to weight an image which contain relative location (where the origin is situated in the center of this image). This result in an image where each pixel represents a weighted shift. It is easy to see that the mean shift is the mean of this image.
 
-\subsection{Brute force}
+\subsection{Other tracking methods}
+This section describes other methods of tracking or object localisation explored in this project. Not all methods are used in the experimentation section, though all have been explored and a short description is therefore justified.
+
+\subsubsection{Histogram back projection}
+With a PDF representing the object to be tracked(target), we can take any picture, and assign every pixel in that image the probability attached to the corresponding bin in the PDF. In this manner pixels which are assigned a high probability, are similar to many pixels in the target, since it falls in a bin with large probability. Likewise pixels with a low probability are largely dissimilar. The target canthen be found in a region of the image which has high average probability. The problem with this approach is that it only looks at the dominant colors in the target and not to the similarity of the PDFs between regions. Furthermore, it requires an exhaustive assignment of probabilities to all pixels.
+
+\subsubsection{Brute force}
 So we are talkign about this because it is interstingly silly. We want to say meanshift tracker is less computationally complex and therefore faster. 
 First the tracked object is modeled by computing a color histogram; the target model. In the next frame a new color histogram is computed on every location; these are the candidate models. The target model is compared with all candidate models using a distance measure. The new location is determined by the location of the candidate histogram with the lowest distance.
 		
