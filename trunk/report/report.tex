@@ -37,43 +37,62 @@ The appearance based tracker discussed in this paper is the mean-shift tracker.
 Color is the feature that will be tracked, so different color models will be presented and applied. Following this, subsequent tracking results on different videos for both trackers will be discussed. Specifically, we want to explain through experiments how the mean-shift tracker behaves under varying video conditions (such as occlusion and objects of varying scales), and what the influence of the used color model is.
 	As said at the beginning of this section, videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will, therefore, also be discussed. 
 	
-	This paper is organised as follows:  after the introduction of the topic in section 1, the theory behind the used trackers and colorspaces will be discussed in section 2.
+	This paper is organised as follows:  after the introduction of the topic in section 1, the theory behind the used trackers and color models will be discussed in section 2.
 	Section 3 will be devoted to the implementation of the presented theories. The experimental setup, a description of the data, subsequent results and their discussion will be presented in section 4. 
 	Finally, section 5 will present the main conclusions on color based mean shift tracking.
 
 \section{Theory}	
-	This section will explain the main theories used in the mean shift tracker. The color of an object is dependent on what we can call the intrinsic color of the object and other factors such as lighting. Because the tracker will track an object on its color, it is important to choose a color space that is invarient to all factors except the instrinsic color of the object. Therefore in the following section, colorspaces in general as well as some specific colorspaces and their invarient properties will be introduced. Following this, histograms, which are probabilistic descriptions, or probability density functions (PDF), of color in image regions, will be discussed. We can compare PDFs using certain distance measures, which enables us to find color similarities between image regions. These concepts are integral to understanding the mean-shift tracker, which will be discussed afterwards. For an interesting comparison, the simpler brute force tracker willl be briefly discussed last.  
+	This section will explain the main theories used in the mean shift tracker. The color of an object is dependent on what we can call the intrinsic color of the object and other factors such as lighting. Because the tracker will track an object on its color, it is important to choose a color model that is invarient to all factors except the instrinsic color of the object. Therefore in the following section, color models in general as well as some specific color models and their invarient properties will be introduced. Following this, histograms, which are probabilistic descriptions, or probability density functions (PDF), of color in image regions, will be discussed. We can compare PDFs using certain distance measures, which enables us to find color similarities between image regions. These concepts are integral to understanding the mean-shift tracker, which will be discussed afterwards. For an interesting comparison, the simpler brute force tracker willl be briefly discussed last.  
 
 %DONE TILL HERE
 
-\subsection{Colorspaces}
+\subsection{Color models}
 %		It was previewed in the introduction that an object would be tracked by its appearance, and that the feature used to do so would be color. In this section we will describe three different color models and their relevance to appearance based tracking, but first we will discuss some general properties of color.
 
-The color a camera detects is dependent on the Spectral Power Distribution (SPD) of the light source, the reflectance factor of a patch of the object, the color matching functions of the camera sensors and the geometric arrangement of the lightsource(s), the object and the observer. The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor  describes how much each part of the spectrum gets reflected and how much gets absorbed by the object. The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangement also influences the color \cite{gevers_color}.
+Before we start this section it is important to make note of some color characteristics. First there is a difference between what we have called the intrinsic color of an object and the appearent color of that object. As an example, a white car will look white in normal daylight, however, when lit at night by the orange light of a sodium lamp the white car will look orange. In this example the intrinsic color of the car is white, while the appearent color is either white or orange depending on the lightsource. In the following discussion on light we will explain this color behavior. Furthermore, an object rarely has uniform color, therefore an object patch is defined as a sufficiently small region of an object such that it has uniform color properties.
 
-Here it is important to distinguish between the reflectance factor of a patch of an object, and the appearance of this patch's color to a camera. All factors described above influence the appearance of the patch, however the reflectance factor stays constant. Therefore, we want to track an object based on its reflectance factor since this is the only factor intrinsic to the object.  Hence, we want to have a color model which is ideally invariant to all factors that influence the appearance of the object except for the reflectance factor.  
+When a camera is aimed at an object patch, the color it detects is dependent on the Spectral Power Distribution (SPD) of the light source, the reflectance factor of a patch of the object, the color matching functions of the camera sensors and the geometric arrangement of the lightsource(s), the object and the observer, as well as the geometric properties of the object itself. The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor describes how much each part of the spectrum gets reflected and how much gets absorbed by the object patch, this is the source of what we have called . The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangement and properties of the object also influences the color \cite{gevers_color}.
 
-\subsubsection{RGB}
-		
-		All percievable colors can, based on trichromacy theory \cite{gevers_color}, be modeled by the response of three sensors. 
-		
-		RGB is a standard colorspace used in computer vision, which desribes the detected colors as a tri-stimulus, (R,G,B). Where R corresponds the response of the Red sensor, which is most sensitive to Red, G to the response of the green sensor and B to the resonse of the Blue sensor.
+It is important to distinguish between the reflectance factor of a patch of an object, and the appearance of this patch's color to a camera. All factors described above influence the appearance of the patch, however the reflectance factor stays constant. Therefore, we want to track an object based on its reflectance factor since this is the only factor intrinsic to the object.  Hence, we want to have a color model which is ideally invariant to all factors that influence the appearance of the object except for the reflectance factor.  Last color model and color model will be used interchangably, 
 
-		% TODO where should invariants go?, say some general about invariants and show table[Color Feature Detection, Geveres]
-		However, this model has some problems for the domain of object tracking. it is not invariant to illumination intensity, which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
-		Furthermore, RGB 
+\subsubsection{RGB and XYZ}
+		
+All percievable colors can, according to trichromacy theory \cite{gevers_color}, be modeled as the response of three sensors, namely: red, green, blue. The RGB color model resembles the human perception of colors in the sense that human color vision can also be said to be the result of a tri-stimulus.  RGB is an additive color model, which describes each color as a mixture of the three mentioned primary colors.
+
+Some properties of the RGB color model is that it is a device dependent color model, meaning that a given RGB color will be detected or reproduced differently on different devices. This behavior is caused by the fact that the three primary colors are not defined and therefore every device might use three different pimary colors to detect or reproduce colors. Another property of RGB is that it is not invariant to illumination intensity, illumination intensity, highlights nor geometry \cite{gevers_invariant}. Since RGB is not invariant to any of the factors which influence the appearant color of an object patch, this color model seems ill equiped for tracking. However it is the standard model for representing colors and therefore woth mentioning.
+
+the XYZ color model, just like RGB is also a tri-stimulus model, however it is defined  with 3 fictive primary colors X, Y and Z. The three colors are a linear combination of the RGB colors. However, the X,Y and Z colors are well defined, therefore, the XYZ colorspace is device independent. All invariant properties are the same for both RGB and XYZ.
+
+%which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
+%RGB is a standard colorspace used in computer vision, which desribes the detected colors as a tri-stimulus, (R,G,B). Where R corresponds the response of the Red sensor, which is most sensitive to Red, G to the response of the green sensor and B to the resonse of the Blue sensor.
+%However, this model has some problems for the domain of object tracking. it is not invariant to illumination intensity, which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
 		
 
 		
-\subsubsection{Normalised RGB}
-		Normalised RGB is a colormodel which is invariant to illumination intensity, orientation of the object surface and also viewpoint invariant. 
-		The normalised RGB colorspace is 3-dimensional but since all 3 channels are divided by the intencity we have, r+g+b =1,, therefore it is overdetermined as a 3-dimensional system and can be described in 2 dimensions r,g, where b can be deduced through 1-(r+g).
-		normalised RGB is derived from RGB by deviding the reponse of each color channel by the intensity, thus creating an intensity invariant colorspace
+\subsubsection{Normalised RGB and normalised XYZ}
+
+In the RGB color model a change in lighting intensity would make the responses of all three color channels increase proportional to the intensity change. Through normalisation the lighting intensity can be fixed, which makes normalised RGB(rgb) invariant to illumination intensity. The geometric arrangements also influences all color channels proportionally and therefore influnece the color intensity of the perceived object patch. Invariance to illumination intensity therefore also creates invariance for geometric arrangement. rgb however is still not invariant to illumination color or highlights \cite{gevers_invariant}. 
+Let $I$ denote the intensity, then rgb can be calculated from RGB in the following way:
+\begin{eqnarray}
+\label{eq:rgb}
+I &=& R+G+B \\
+r &=& \frac{R}{I},\; g = \frac{G}{I},\; b = \frac{B}{I}
+\end{eqnarray}
+
+Two things are worth concidering here, first $r,g,b$ are undefined for black when $I=0$, this can be remedied by recognising that white black and grey are the same except for intensity. Thus black in rgb space should be the same as white or grey which is $r=g=b$. Last the rgb colorspace is 3-dimensional, however since all 3 channels are divided by the intensity, it must be that $r+g+b=1$. Therefore, rgb it is overdetermined as a 3-dimensional space and can be described in 2 dimensions $r,g$, where $b$ can be deduced through $b=1-(r+g)$.
+
+Similar to RGB the device independent colorspace XYZ can be normalised to a normalised XYZ(xyz).		
 		
-\subsubsection{Hue}
-		The Hue is derived from a different color space, where a color is not described as the response of three RGB sensors but it is described as a Hue, which can be seen as a pure spectral color, saturation which describes how pure the color is, if it is fully satureated there is a pure spectral color, less saturated colors have more white mixed in. Last the intensity describes how bright the color is. 
-		The colorspace consisting of only Hue is 1-dimensional.
-		Hue is invariant to illumination and object and observer geometry and highlights. [quote invariant claim]
+\subsubsection{HSV}
+The hue, saturation, value model(HSV) does not represent color as a tri-stimulus, rather it uses three color properties to describe a color. hue describes the dominant wavelength, saturation describes how dominant this wavelength is with respect to the whole of the visual spectrum, last value indicates the brightness of the color response, similar to Intensity. The HSV-space can be thought of as a cone, where the central axis ranges between black at the bottom and white on top, the value indicates the distance along this central axis. The angle around the axis is described by the hue, while Saturation indicates the distance from the central axis to the edge of the cone. 
+
+When we defenestrate all but the Hue, we are left with a 1-dimensional space, describing color in a manner that is invariant to illumination and geometrical conciderations as well as highlights \cite{gevers_invariant}. The illumination intensity invariance can be understood in the following way, by removing the value we make our representation illumination independent, since value exactly describes this property. We can derive hue $H$ from RGB as follows:
+
+\begin{equation}
+\label{eq:hue}
+H = arctan\left(\frac{\sqrt{3}\,(G-B)}{(R-G)+(R-B)}\right)
+\end{equation} 
+		 
 \subsection{Histogram}
 		We want to describe an image patch as a probability density function(pdf). This means that we could compare different image patches and a measure of similarity would be how much both distributions look alike %TODO uglysentence thatis
 		Furthermore we could compare patches of different size since the probability distribution would describe to what relative frequency colors are in a patch.
