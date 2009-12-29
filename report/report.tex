@@ -148,9 +148,9 @@ Intuitively it can be seen that when both $p$ and $q$ are similar, $\sqrt{p(u)\c
 
 %When the color in an image patch is described as a probability density function(pdf),  a comparison between different image patches can be made, given a difference measure for probability density functions. and a measure of similarity would be how much both distributions look alike 
 
-		
 \subsection{Meanshift}
-Mean shift is an algorithm that finds the most probable target position of a tracked object in a frame. First a the tracked object is modeled by computing a color histogram. Likewise on the same location but in the next frame an other color histogram is computed. These two histograms are compared using a Bhattagarya distance measure. This results in a weight image where high values represent pixels that are similar.  For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
+Before discussing the mean-shift algorithem let us first get an intuition about the minimising the bhattagharyya distance.  
+Mean shift is an algorithm used for tracking, therefore, it can identify the most likely position of an object in a video frame that is consistent with locations found in previous video frames, given an object description. First a the tracked object is modeled by computing a color histogram, this PDF is the target model. In a new frame the mean-shift algorithm starts at the last known position of the object, this  Likewise on the same location but in the next frame an other color histogram is computed. These two histograms are compared using a Bhattagarya distance measure. This results in a weight image where high values represent pixels that are similar.  For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
 This is used to weight an image which contain relative location (where the origin is situated in the center of this image). This result in an image where each pixel represents a weighted shift. It is easy to see that the mean shift is the mean of this image.
 
 \subsection{Other tracking methods}
