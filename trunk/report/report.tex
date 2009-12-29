@@ -475,6 +475,15 @@ An example where the tracker fails can be seen in Figure 1. On the
 otherhand an example of a succesfull tracking result can be seen in
 Figure 2. 
 
+To test the performane of the tracker in a different domain, a movie of
+skydiving was also used for tracking. In this movie a dual jump is made, this is
+filmed from an airplane, the starting quality of this movie is aliased, (looks
+bad). The skydiver diminish in size quickly, see Figure 4. 
+Since the tracker performed well in most colorspace as long as 8bins per
+colorchannel were used, we only experimented with RGB was with 8 bin was. The
+track was never lost even though the skydivers are small in the end. Thus the
+tracker also works in differnt domains. 
+
 
 \begin{figure}[!ht]
 \label{fig:RGB_8}
@@ -491,6 +500,22 @@ The tracker loses track at the moment of occlusion.}
 \includegraphics[width=18cm]{images/rg_8_eps}
 \caption{Tracking performance in rg colorspace modeled with 8 bins per channel.
 The tracker keeps track even if the player is totally occluded.}
+\end{figure}
+
+\begin{figure}[!ht]
+\label{fig:para}
+\centering
+\includegraphics[width=20cm]{images/RGB_para_eps}
+\caption{Tracking performance of an alternative scene (parachute jumping)
+where the object is quickly decreasing in size. We modeled the object with a
+RGB colorspace with 8 bins per channel. The tracker performens very well.}
+\end{figure}
+
+\begin{figure}[!ht]
+\label{fig:para}
+\centering
+\includegraphics[width=20cm]{images/RGB_para_var_eps}
+\caption{TODO}
 \end{figure}
 % 
 %TODO compare with other scene
