@@ -474,20 +474,24 @@ therefor rg has more discriminate power.
 \subsection{Discussion} % discussion of results
 \section{Conclusions} \label{sec:conc}
 \section{Future Work} \label{sec:fut}
+It is remarkable that downsampling has such drastic effects for tracking in all color models, while non downsampled frames get tracked well. This could partly be explained by the lack of proper smoothing in the down sampling used. Therefore better Gaussian smoothing before downsampling should improve performance. It would be interesting to see if this would improve tracking for downsampled images, possibly a critical point can be determined where further downsampling would have desasterous effects.
+Here one can even think of a Gaussian pyramide, if it can be determined what the smallest picture in the Gaussian pyramide still gives a good rack than with every step down the pyramide, size of the image decreases with a factor 4, thus improving the speed of the tracker. 
+Furthermore only tracking on color seems to be too sparse of a description for instance when presneted with occlusion, for instance when 2 players bypassed each other the tracking sometimes passes from one to the other player. If speed of the object is also used in the description this behaviouor could be avoided. This would include implementing a Kalman filter to keep track of the speed. 
+Furthermore it is not fully understood why and when certain color models work better than others, further reseacrh into this should mak it possible to automatically detect what color model wshould work best in the presented movie, thus again improving the tracker.
+Some minor future work would make the tracker more robust, for instance in avoiding windosizes which are extremely small, or extremely big, or problems when the tracked object comes close to the boundary of the image frames. 
+Furthermore a good evaluation for tracking would not only rely on qualitive assessment of the humans but better metrics should be used. One can think to measure the Bhacharattya distance along a track, which is a measure for the goodness of the match of the found object. Also a ground truth hand-labled track would help so the distance from the tracker to this ground truth could be measured.
+
+
+Future work:
+
+
 Observe how you can improve your design and them describe how you implemented this change or, for lack of time, describe how you would change your design. 
 e.g. a different color space or the number of bins in the histogram
 test the tracker also on a video of a domain other than soccer (or any other sport on a green field)
 
-Future work:
-It would be nice to perform tests on different scales of downsampling with
-different interpolation methods.
 
 
-% variable tracking window size 
-%TODO write something about kalman
-%TODO would be better to have a ground truth and compair the tracking
-%coordinates to the ground truth, no just a binary val (keeped track or not) is
-%used
+
 
 \section{References} 
 
