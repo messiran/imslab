@@ -216,6 +216,13 @@ K_E(x) = \left\{ \begin{array}{cl}
   0 & \textrm{otherwise.} \end{array}\right.
 \end{equation}
 
+Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we derive
+\begin{equation}
+\label{eq:epanechnikov_kernel2}
+K_E(x) = \left\{ \begin{array}{cl}
+  \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
+  0 & \textrm{otherwise} \end{array}\right.
+\end{equation}
 
 
 
@@ -345,33 +352,43 @@ The mean-shift algorithm does not exhaustively compute all Bhattacharyya distanc
 
 
 \section{Implementation}
+The implementation of the mean-shift algorithm generally follows the implementation as discussed in \cite{mean_shift}. However, there are some noteworthy differences as well as some practical issues worth discussing in the following section. 
 
-The implementation of the mean-shift algorithm generally follows the implementation as discussed in \cite{mean_shift}. However, there are some noteworthy differences as well as some practical issues worth discussing in the following section.
+\subsection{Mean-shift differences}
+The mean shift we implemented algorithm performs the following steps:
+Given : 
+\begin{itemize}
+\item a target model $q$
+\item the last target location $y_0$
+\end{itemize}
+For a new frame
+\begin{enumerate}
+\item \label{start} Assign the candidate location $y$ with $y_0$.
+\item \label{loop} Calculate the candidate model $p$ at location $y$, keep the 1st candidate model as $p_0$
+\item Calculate the weights for every bin, using $p$ and $q$.
+\item Obtain the shift vector $v_{shift}$ using equation \ref{eq:shift vector}, using $w$ and normalised pixel locations $x$ in the candidate region.
+\item rescale $v_{shift}$ to standard pixture sizes, "un-normalise"
+\item If $v_{shift} < \frac{1}{2}$, thus rounded the shift is less than a pixel location\\
+\begin{itemize}
+\item if true, goto \ref{it:stop}
+\item else, assign $y=y+v_{shift}$, goto \ref{loop}
+\end{itemize}
+\item \label{it:stop} check if Bhattacharyya distance between location $y$ and $y_0$ has indeed decreased with $d(p,q) < d(p_0,q)$ 
+\begin{itemize}
+\item if true, $y_0 = y$
+\item else, $y_0 = y_0$, 
+\end{itemize}
+\item go to the next frame and goto \ref{start}
+\end{enumerate}
 
-
-
-\subsection{Mean-shift paper differences}
-
-\subsubsection{Epanechnikov Kernel}
-
-
-
-Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we derive
-
-\begin{equation}
-\label{eq:epanechnikov_kernel2}
-K_E(x) = \left\{ \begin{array}{cl}
-  \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
-  0 & \textrm{otherwise} \end{array}\right.
-\end{equation}
-
-
-
+A difference with the meanshift tracker as presented in \cite{mean_shift} is that we do not  abundantly check if the distance is indeed decreased at every step. Also, the "overshoot" prevention of taking half a shift step was not found to be required. Another difference, is the modified  Epanechnikov kernel other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
+  
 \subsection{Speed considerations}
+During the development it was noticed that most of the time of the mean-shift tracker was spent loading and writing the tracked video frames. Therefore, all frames are pre-loaded in memory before the tracking starts. This has the benefit that the tracking is extremely fast, with the used datasets, tracking on a singlecore@3Ghz consumer grade PC, is more than 10x faster than real time, if the loading and saving of the images are not measured. The downside of this approach is that the computer needs to keep all frames stored in memory 
 
 
 
-Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
+
 
 \section{Results} 
 
