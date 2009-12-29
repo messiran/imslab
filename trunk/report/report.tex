@@ -1,46 +1,25 @@
 %TODO
-
 % spell check, b.v. ispell op de uva
-
 % zoeken op TODO punten
-
-
 
 %% vi: set tabs top=2, set textwidth=80
 
 \documentclass[a4paper,11pt]{article}
 
-
-
 \usepackage{homework}
-
 % \usepackage{graphicx, subfigure}
-
 % \usepackage{verbatim}
-
 % \usepackage{algorithm, algorithmic}
-
 % \usepackage{amsmath, amsthm, amssymb}
-
 \usepackage[english]{babel}
-
 \usepackage{url}
-
 \usepackage{dsfont}
-
 \usepackage{footmisc}
 
-
-
 \title{Mean-shift Object Tracking\\ Lab Report for IMS}
-
 \date{}
-
 \begin{document}
-
 \maketitle 
-
-
 
 \section{Introduction}
 
@@ -91,10 +70,6 @@ Color is the feature that will be tracked, so different color models will be pre
 \section{Theory}	
 
 	This section will explain the main theories used in the mean shift tracker. The color of an object is dependent on what we can call the intrinsic color of the object and other factors such as lighting. Because the tracker will track an object on its color, it is important to choose a color model that is invarient to all factors except the instrinsic color of the object. Therefore in the following section, color models in general as well as some specific color models and their invarient properties will be introduced. Following this, histograms, which are probabilistic descriptions, or probability density functions (PDF), of color in image regions, will be discussed. We can compare PDFs using certain distance measures, which enables us to find color similarities between image regions. These concepts are integral to understanding the mean-shift tracker, which will be discussed afterwards. For an interesting comparison, the simpler brute force tracker willl be briefly discussed last.  
-
-
-
-%DONE TILL HERE
 
 
 
@@ -161,13 +136,9 @@ The following equations describe the conversion from RGB to rgb, for each color 
 Let $I$ denote the intensity:
 
 \begin{eqnarray}
-
 \label{eq:rgb}
-
 I &=& R+G+B \\
-
 r &=& \frac{R}{I},\; g = \frac{G}{I},\; b = \frac{B}{I}
-
 \end{eqnarray}
 
 
@@ -191,11 +162,8 @@ When we defenestrate all but the hue, we are left with a 1-dimensional color spa
 
 
 \begin{equation}
-
 \label{eq:hue}
-
 H = arctan\left(\frac{\sqrt{3}\,(G-B)}{(R-G)+(R-B)}\right)
-
 \end{equation} 
 
 
@@ -233,29 +201,19 @@ Let $x$ be a normalised location, such that the borders of our image region lie 
 
 
 \begin{equation}
-
 \label{eq:epanechnikov_profile}
-
 k_E(x) = \left\{ \begin{array}{cl}
-
   1-x & \textrm{if } 0 \leq x \leq 1\\
-
   0 & \textrm{if }  x > 1 ,\end{array}\right.
-
 \end{equation}
 
 with a subsequent radially symmetric kernel in 2 dimensions, described as:
 
 \begin{equation}
-
 \label{eq:epanechnikov_kernel1}
-
 K_E(x) = \left\{ \begin{array}{cl}
-
   \frac{2}{\pi} (1-\|x\|^2) & \textrm{if } \|x\| \leq 1 \\
-
   0 & \textrm{otherwise.} \end{array}\right.
-
 \end{equation}
 
 
@@ -273,11 +231,8 @@ Multiple local color feature descriptors need to be compared to find the one tha
 
 
 \begin{equation}
-
 \label{eq:bhattdistance}
-
 d(p,q) = \sqrt{1-\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}}.
-
 \end{equation}
 
 where $m$ denotes the number of bins, $p$ and $q$ are two discrete PDFs and $p(u)$ is the probability density for bin $u$ in PDF $p$. 
@@ -313,7 +268,7 @@ To understand brute force tracking intuitively, consider an image for which at e
 
 \subsection{Meanshift}
 
-The thought behind the mean-shift algorithm is the following. Instead of computing all Bhattacharyya distances in a region close to the last known object position, why not take steps towards the local minimum of the Bhattacharyya distance. Therefore we need to create a shift vector which indicates in what direction and how big a step needs to be taken to obtain the lowest Bhattacharyya distance. If we are close to the local minimum, small steps are prudent, whereas further away larger steps are allowed. 
+The thought behind the mean-shift algorithm is the following: Instead of computing all Bhattacharyya distances in a region close to the last known object position, why not\textbf{< can we not replace with "} take steps towards the local minimum of the Bhattacharyya distance. Therefore we need to create a shift vector which indicates in what direction and how big a step needs to be taken to obtain the lowest Bhattacharyya distance. If we are close to the local minimum, small steps are prudent, whereas further away larger steps are allowed. 
 
 
 
@@ -322,11 +277,8 @@ The shift vector is computed in the following manner, first weights for evey bin
 
 
 \begin{equation}
-
 \label{eq:weights}
-
 w(u) = \sqrt{\frac{q(u)}{p(u)}}
-
 \end{equation} %TODO klopt dit?
 
 where $w(u)$ is the weight, $q(u)$ is the target model, $p(u)$ is the candidate model all for bin $u$.
@@ -338,11 +290,8 @@ As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$, will be c
 
 
 \begin{equation}
-
 \label{eq:shift vector}
-
 v_{shift}=\frac{\sum_{x\in Pixels} x \ w(b(c(x)))}{\sum_{x\in Pixels} w(b(c(x)))}
-
 \end{equation} %TODO klopt dit?
 
     
@@ -410,15 +359,10 @@ The implementation of the mean-shift algorithm generally follows the implementat
 Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we derive
 
 \begin{equation}
-
 \label{eq:epanechnikov_kernel2}
-
 K_E(x) = \left\{ \begin{array}{cl}
-
   \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
-
   0 & \textrm{otherwise} \end{array}\right.
-
 \end{equation}
 
 
@@ -471,7 +415,22 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 
 	\end{tabular}	
 
+	\begin{tabular}{l*{8}{r|}}
 
+		scene	& 	colorspace	& downsampled & 2 & 4 & 8 & 16 & 32\\
+
+		\hline
+
+		soccer 	& 	RGB	 		& 1x		  			& - & - & - & - & -\\
+
+		soccer 	& 	XY	 		& 1x 		  			& - & - & + & -  &  -\\
+
+		soccer 	& 	rg	 		& 1x		 			& -  & + & + & - &  +\\
+
+		soccer 	& 	H	 		& 1x		  			& - & - & - & + &  +\\
+
+		soccer 	& 	HSV	 		& 1x		  			& -  & - & - & - & - \\ 
+	\end{tabular}	
 
 \subsubsection{Conclusions}
 
