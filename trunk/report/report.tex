@@ -48,31 +48,36 @@ Color is the feature that will be tracked, so different color models will be pre
 %DONE TILL HERE
 
 \subsection{Color models}
-%		It was previewed in the introduction that an object would be tracked by its appearance, and that the feature used to do so would be color. In this section we will describe three different color models and their relevance to appearance based tracking, but first we will discuss some general properties of color.
+To clarify the content of this section it is important to take note of some characteristics of color. First, there is a difference between what we have called the intrinsic color of an object and the apparent color of that object. As an example, a white car looks white in normal daylight, whereas, when lit at night by the orange light of a sodium lamp, the white car will look orange. In this example, the intrinsic color of the car is white, while the appearent color is either white or orange depending on the lightsource.
 
-%Before we start this 
-\textbf{To clarify the content of} this section it is important to take note of some color characteristics. First, there is a difference between what we have called the intrinsic color of an object and the appearent color of that object. As an example, a white car looks white in normal daylight, whereas, when lit at night by the orange light of a sodium lamp, the white car will look orange \textbf{Does this need to be cited?}. In this example, the intrinsic color of the car is white, while the appearent color is either white or orange depending on the lightsource. In the following discussion on light, we will explain this \textbf{such} color behavior. \textbf{Can this sentence be shifted before the previous sentance? Because I assume that this will be part of explaining color behavior}Furthermore, an object rarely has uniform color, therefore an object patch is defined as a sufficiently small region of an object such that it has uniform color properties.
+Another notworthy detail is that an object rarely has uniform color, therefore, an object patch is defined as a sufficiently small region of an object such that it has uniform color properties. 
 
-When a camera is aimed at an object patch, the color it detects is dependent on \textbf{some stuff:} the Spectral Power Distribution (SPD) of the light source, the reflectance factor of a patch of the object, the color matching functions of the camera sensors and the geometric arrangement of the lightsource(s), the object and the observer, as well as the geometric properties of the object itself. \textbf{Im not sure what is being said with the previous sentence} The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor describes how much each part of the spectrum gets reflected and how much gets absorbed by the object patch, this is the source of what we have called. The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangement and properties of the object also influences the color \cite{gevers_color}.
+When a camera is aimed at an object patch, the color it detects is dependent on the following factors: 
+\begin{itemize}
+\item the Spectral Power Distribution (SPD) of the light source
+\item the reflectance factor of a patch of the object
+\item the color matching functions of the camera sensors 
+\item the geometric arrangement of the lightsource(s), the object and the observer
+\item the geometric properties of the object itself
+\end{itemize}
+The SPD describes for the whole visible light spectrum with what intensity every wavelength is being radiated. The reflectance factor describes how much each part of the spectrum gets reflected and how much gets absorbed by the object patch; this is what has been referred to as the intrinsic color. The color matching functions indicate the magnitude of the response of a camera sensor for every wavelength of incoming radiation. Last, the geometric arrangements and properties of the object also influence the color \cite{gevers_color}.
 
-It is important to distinguish between the reflectance factor of a patch of an object, and the appearance of this patch's color to a camera. All factors described above influence the appearance of the patch, however the reflectance factor \textbf{is the only one to} stays constant. Therefore, we want to track an object based on its reflectance factor since this is \textbf{also} the only factor intrinsic to the object.  Hence, we want to have a color model which is ideally invariant to all factors that influence the appearance of the object except for the reflectance factor.  Last color model and color model will be used interchangably, \textbf{moar hurr?}
+It is important to distinguish between the reflectance factor of a patch of an object, and the appearance of this patch's color to a camera. All factors described above influence the appearance of the patch, however the reflectance factor is the only one to stays constant. Therefore, we want to track an object based on its reflectance factor since this is also the only factor intrinsic to the object.  Hence, we want to have a color model which is ideally invariant to all factors that influence the appearance of the object except for the reflectance factor. In the following sections, various color models will be discussed in terms of their general properties and their invariance, in particular. 
 
 \subsubsection{RGB and XYZ}
 		
 All percievable colors can, according to trichromacy theory \cite{gevers_color}, be modeled as the response of three sensors, namely: red, green, blue. The RGB color model resembles the human perception of colors in the sense that human color vision can also be said to be the result of a tri-stimulus.  RGB is an additive color model, which describes each color as a mixture of the three mentioned primary colors.
 
-Some properties of the RGB color model is that it is a device dependent color model\textbf{, which means that} a given RGB color will be detected or reproduced differently on different devices. This behavior is caused by \textbf{the fact that (this is not caused by a fact)} the three primary colors are not defined and therefore every device might use three different primary colors to detect or reproduce colors. Another property of RGB is that it is invariant to \textbf{neither} illumination intensity, highlights nor geometry \cite{gevers_invariant}. Since RGB is not invariant to any of the factors which influence the apparant color of an object patch, this color model seems ill-equipped for tracking. However, it is the standard model for representing colors and therefore worth mentioning.
+Some properties of the RGB color model is that it is a device dependent color model, which means that a given RGB color will be detected or reproduced differently on different devices. The three primary colors are not defined and therefore every device might use three different primary colors to detect or reproduce colors; this causes the device dependent property of this color model. Another property of RGB is that it is invariant to neither illumination intensity, highlights nor geometry \cite{gevers_invariant}. Since RGB is not invariant to any of the factors which influence the apparant color of an object patch, this color model seems ill-equipped for tracking. However, it is the standard model for representing colors and therefore worth mentioning.
 
 The XYZ color model, just like RGB is also a tri-stimulus model, however it is defined  with 3 fictive primary colors X, Y and Z. The three colors are a linear combination of the RGB colors. However, the X,Y and Z colors are well defined, therefore, the XYZ colorspace is device independent. All invariant properties are the same for both RGB and XYZ.
 
-%which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
-%RGB is a standard colorspace used in computer vision, which desribes the detected colors as a tri-stimulus, (R,G,B). Where R corresponds the response of the Red sensor, which is most sensitive to Red, G to the response of the green sensor and B to the resonse of the Blue sensor.
-%However, this model has some problems for the domain of object tracking. it is not invariant to illumination intensity, which means that if the amount of light that falls on an object changes, th appearance changes, the human analog is the perception of shades. 
-		
-\subsubsection{Normalised RGB and normalised XYZ}
+\subsubsection{Normalised RGB and Normalised XYZ}
 
-In the RGB color model a change in lighting intensity would make the responses of all three color channels increase proportionally to the intensity change. Through normalisation, the lighting intensity can be fixed, which makes normalised RGB(rgb) invariant to illumination intensity. The geometric arrangements also influence all color channels proportionally and therefore influnece the color intensity of the perceived object patch. Invariance to illumination intensity, therefore also creates invariance for geometric arrangement. rgb however is still not invariant to illumination color or highlights \cite{gevers_invariant}. \textbf{Lead in to equation - i.e. why are you showing it?}
-Let $I$ denote the intensity, then rgb can be calculated from RGB in the following way:
+In the RGB color model, a change in lighting intensity would make the responses of all three color channels increase proportionally to the intensity change. Through normalisation, the lighting intensity can be fixed, which makes normalised RGB(rgb) invariant to illumination intensity. The geometric arrangements also influence all color channels proportionally and therefore influnece the color intensity of the perceived object patch. Invariance to illumination intensity, therefore, also creates invariance for geometric arrangement. rgb however is still not invariant to illumination color or highlights \cite{gevers_invariant}. 
+
+The following equations describe the conversion from RGB to rgb, for each color channel respectively.  
+Let $I$ denote the intensity:
 \begin{eqnarray}
 \label{eq:rgb}
 I &=& R+G+B \\
@@ -81,32 +86,33 @@ r &=& \frac{R}{I},\; g = \frac{G}{I},\; b = \frac{B}{I}
 
 Two things are worth concidering here, first $r,g,b$ are undefined for black when $I=0$, this can be remedied by recognising that white black and grey are the same except for intensity. Thus black in rgb space should be the same as white or grey which is $r=g=b$. Last the rgb colorspace is 3-dimensional; however, since all 3 channels are divided by the intensity, it must be that $r+g+b=1$. Therefore, rgb is overdetermined as a 3-dimensional space and can be described in 2 dimensions $r,g$, where $b$ can be deduced through $b=1-(r+g)$.
 
-Similar to RGB, the device independent colorspace XYZ can be \textbf{normalised - same word twice} to a normalised XYZ(xyz).		
+Similar to RGB, the device independent colorspace XYZ can be converted to a normalised XYZ(xyz).		
 		
 \subsubsection{HSV}
-The hue, saturation, value model(HSV) does not represent color as a tri-stimulus, rather it uses three color properties to describe a color. Hue describes the dominant wavelength, saturation describes how dominant this wavelength is with respect to the whole of the visual spectrum, last value indicates the brightness of the color response, similar to intensity. The HSV-space can be thought of as a cone, where the central axis ranges between black at the bottom and white on top, the value indicates the distance along this central axis. The angle around the axis is described by the hue, while Saturation indicates the distance from the central axis to the edge of the cone. \textbf{are caps for Saturation, Intensity necessary?}
+The hue, saturation, value model(HSV) does not represent color as a tri-stimulus, rather it uses three color properties to describe a color. Hue describes the dominant wavelength, saturation describes how dominant this wavelength is with respect to the whole of the visual spectrum, last value indicates the brightness of the color response, similar to intensity. The HSV-space can be thought of as a cone, where the central axis ranges between black at the bottom and white on top, the value indicates the distance along this central axis. The angle around the axis is described by the hue, while saturation indicates the distance from the central axis to the edge of the cone. 
 
-When we defenestrate all but the Hue, we are left with a 1-dimensional space, describing color in a manner that is invariant to illumination and geometrical conciderations as well as highlights \cite{gevers_invariant}. The illumination intensity invariance can be understood in the following way: by removing the value we make our representation illumination independent, since value exactly describes this property. We can derive hue $H$ from RGB as follows:
+When we defenestrate all but the hue, we are left with a 1-dimensional color space\footnote{Note the difference between a color space and a color model. The latter induces the former. For instance, the RGB 3-dimensional color space arises from the tri-stimulus color model, with 1 dimension for each color channel.}.  We can derive hue $H$ from RGB as follows:
 
 \begin{equation}
 \label{eq:hue}
 H = arctan\left(\frac{\sqrt{3}\,(G-B)}{(R-G)+(R-B)}\right)
 \end{equation} 
 
-\textbf{Should there be any finishing of this section?}
+Describing color in this manner is invariant to illumination and geometrical considerations as well as highlights \cite{gevers_invariant}. The illumination intensity invariance can be understood in the following way: by removing the value we make our representation illumination independent, since value exactly describes this property.
 		 
 \subsection{Histogram}
-In the previous section various color models and their invariant properties were discussed. Once a color model has been chosen the problem of describing an object as well as identifying an object in a videoframe given the object description and it's location in previous videoframes needs to be addressed. This problem can be conquerd with the use of histograms, this section describes, histograms as a probability density function(PDF) over a color space. In further sections the Histograms or PDFs that represent the object to be tracked will be called the target model.
+In the previous section, various color models and their invariant properties were discussed. Once a color model has been chosen we are confronted with two problems; firstly, describing an object, and secondly, identifying an object in a videoframe given the object description and it's location in previous videoframes. These problems can be overcome with the use of histograms. This section describes histograms as a probability density function(PDF) over a color space. In further sections the histograms or PDFs that represent the object to be tracked will be called the target model.
 
-We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a PDF over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the description of our object. The description however is not object orientation invariant since different sides of an object can have different colors. 
+We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a PDF over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the description of our object. The description, however, is not object orientation invariant since different sides of an object can have different colors. 
 
-A PDF as described above creates a function over the whole color space, (for RGB if every color channel is described by a byte this leads to $2^{24}$ different colors), this will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this paper the sizes of the bins can be considered fixed, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield a local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, the problem of picking the right bin size remains, too large bins would lead to a PDF which is too coarse, too small to a PDF that is too sparse. Therefore finetuning the number of bins is a delicate task, of balancing between representations which are too coarse and too sparse.  
+A PDF as described above creates a function over the whole color space, (for RGB, if every color channel is described by a byte, this leads to $2^{24}$ different colors). This will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this paper the sizes of the bins are equal, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield a local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, the problem of picking the right bin size remains, too large bins would lead to a PDF which is too coarse, too small to a PDF that is too sparse. Therefore fine-tuning the number of bins is a delicate task of balancing between these two extremes. 
 
 \subsubsection{Epanechnikov Weighting}
-Histograms as described till now weight every color in an image region equally. However it is reasonable to assume that the color near the center of the region is more important than the color near the borders. Therefore a weighting kernel is used which assigns a larger importance to colors near the center, while colors near the borders are weighted less. 
+Histograms so far weight every color in an image region equally. However, it is reasonable to assume that the color near the center of the region is more important than the color near the borders. Therefore a weighting kernel is used to assign a larger importance to colors near the center than to colors near the border.
 
-The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}. Where, "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathds{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}.
-Let $x$ be a normalised location, such that the borders ouf our image region lay at distance 1. then the Epanechnikov profile is
+The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}, where "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathds{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}. The following equation describes the Epanechnikov profile and subsequent kernel: 
+
+Let $x$ be a normalised location, such that the borders of our image region lie at distance 1. Then the Epanechnikov profile is
 
 \begin{equation}
 \label{eq:epanechnikov_profile}
@@ -114,29 +120,19 @@ k_E(x) = \left\{ \begin{array}{cl}
   1-x & \textrm{if } 0 \leq x \leq 1\\
   0 & \textrm{if }  x > 1 ,\end{array}\right.
 \end{equation}
-
-with a subsequent radially symmetric kernel in 2 dimensions
-
+with a subsequent radially symmetric kernel in 2 dimensions, described as:
 \begin{equation}
 \label{eq:epanechnikov_kernel1}
 K_E(x) = \left\{ \begin{array}{cl}
   \frac{2}{\pi} (1-\|x\|^2) & \textrm{if } \|x\| \leq 1 \\
   0 & \textrm{otherwise.} \end{array}\right.
 \end{equation}
-Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we get
-\begin{equation}
-\label{eq:epanechnikov_kernel2}
-K_E(x) = \left\{ \begin{array}{cl}
-  \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
-  0 & \textrm{otherwise} \end{array}\right.
-\end{equation}
 
-Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
 
-The Epanechnikov kernel is used because the derivative of the profile equals $-1$, which makes the derivation and implementation of the mean shift tracker less troublesome than with an other kernel though kernels such as Gaussians are feasable.
+The Epanechnikov kernel is used because the derivative of the profile equals $-1$, which makes the derivation and implementation of the mean shift tracker less troublesome than with another kernel though kernels such as Gaussians are feasable.
 
 \subsubsection{Bhattacharyya Distance}
-Multiple local color feature descriptors need to be compared to find the one that most closely resembles our description of the object we are tracking. Since the local feature descriptors are PDFs we need a similarity or distance measure between PDFs. One such distance is the Bhattacharyya distance, which for discrete distributions is defined as:
+Multiple local color feature descriptors need to be compared to find the one that most closely resembles the description of the object we are tracking. Since the local feature descriptors are PDFs we need a similarity or distance measure between them. One such distance is the Bhattacharyya distance, which for discrete distributions is defined as:
 
 \begin{equation}
 \label{eq:bhattdistance}
@@ -144,7 +140,9 @@ d(p,q) = \sqrt{1-\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}}.
 \end{equation}
 where $m$ denotes the number of bins, $p$ and $q$ are two discrete PDFs and $p(u)$ is the probability density for bin $u$ in PDF $p$. 
 
-Intuitively it can be seen that when both $p$ and $q$ are similar, $\sqrt{p(u)\cdot q(u)}$ will be large for bins where both have accumulated a large probability mass, therefore, $d(p,q)$ will be small. When two PDFs are dissimilar, none of the bins with a large probability mass will match up, therefore  $\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}$ will be small, and $d(p,q)$ will be close to 1.
+Intuitively it can be seen that when both $p$ and $q$ are similar, $\sqrt{p(u)\cdot q(u)}$ will be large for bins where both have accumulated a large probability mass. Therefore, $d(p,q)$ will be small. When two PDFs are dissimilar, none of the bins with a large probability mass will match up, therefore  $\sum_{u=1}^{m} \sqrt{p(u)\cdot q(u)}$ will be small, and $d(p,q)$ will be close to 1.
+
+%DONE UP TILL HERE
 
 %TODO is local color descriptor introduced properly?
 
@@ -183,27 +181,36 @@ Using the fact that we work with 25 frames every second and objects are moving w
 	% smaller then a certain convergence threshold, for example 1 pixel.
 
 \section{Implementation}
+\subsection{Epanechnikov Kernel}
+Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we derive
+\begin{equation}
+\label{eq:epanechnikov_kernel2}
+K_E(x) = \left\{ \begin{array}{cl}
+  \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
+  0 & \textrm{otherwise} \end{array}\right.
+\end{equation}
 
+Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
 \section{Results} 
 	\subsection{Experimental setup} 
 	binsize is per colorchannel
 	\subsection{Brute force} 
 	\subsection{Meanshift} 
 
-	\begin{tabular}{l*{8}{r|}}
-		scene	& 	colorspace	& downsampled & keeped track with binsize & 4 & 8 & 16 & 32\\
+	\begin{tabular}{l*{7}{r|}}
+		scene	& 	colorspace	& downsampled & 4 & 8 & 16 & 32\\
 		\hline
-		soccer 	& 	RGB	 		& 1x		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	RGB	 		& 1x		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	rg	 		& 1x 		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	H	 		& 1x		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	HS	 		& 1x		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	HSV	 		& 1x		  &			bla				  & + & + & +  &  -\\
-		soccer 	& 	RGB	 		& 2x		  &			bla				  & - & - & -  &  -\\
-		soccer 	& 	rg	 		& 2x 		  &			bla				  & - & + & -  &  -\\
-		soccer 	& 	H	 		& 2x		  &			bla				  & - & + & -  &  -\\
-		soccer 	& 	HS	 		& 2x		  &			bla				  & - & + & -  &  -\\
-		soccer 	& 	HSV	 		& 2x		  &			bla				  & - & - & -  &  -\\
+		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
+		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
+		soccer 	& 	rg	 		& 1x 		  			  & + & + & +  &  -\\
+		soccer 	& 	H	 		& 1x		 			  & + & + & +  &  -\\
+		soccer 	& 	HS	 		& 1x		  			  & + & + & +  &  -\\
+		soccer 	& 	HSV	 		& 1x		  			  & + & + & +  &  -\\
+		soccer 	& 	RGB	 		& 2x		  			  & - & - & -  &  -\\
+		soccer 	& 	rg	 		& 2x 		  			  & - & + & -  &  -\\
+		soccer 	& 	H	 		& 2x		  			  & - & + & -  &  -\\
+		soccer 	& 	HS	 		& 2x		  			  & - & + & -  &  -\\
+		soccer 	& 	HSV	 		& 2x		  			  & - & - & -  &  -\\
 	\end{tabular}	
 
 \subsubsection{Conclusions}
