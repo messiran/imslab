@@ -13,6 +13,7 @@
 \usepackage[english]{babel}
 \usepackage{url}
 \usepackage{dsfont}
+\usepackage{footmisc}
 
 \title{Mean-shift Object Tracking\\ Lab Report for IMS}
 \date{}
@@ -148,25 +149,50 @@ Intuitively it can be seen that when both $p$ and $q$ are similar, $\sqrt{p(u)\c
 
 %When the color in an image patch is described as a probability density function(pdf),  a comparison between different image patches can be made, given a difference measure for probability density functions. and a measure of similarity would be how much both distributions look alike 
 
-\subsection{Meanshift}
-Before discussing the mean-shift algorithem let us first get an intuition about the minimising the bhattagharyya distance.  
-Mean shift is an algorithm used for tracking, therefore, it can identify the most likely position of an object in a video frame that is consistent with locations found in previous video frames, given an object description. First a the tracked object is modeled by computing a color histogram, this PDF is the target model. In a new frame the mean-shift algorithm starts at the last known position of the object, this  Likewise on the same location but in the next frame an other color histogram is computed. These two histograms are compared using a Bhattagarya distance measure. This results in a weight image where high values represent pixels that are similar.  For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
-This is used to weight an image which contain relative location (where the origin is situated in the center of this image). This result in an image where each pixel represents a weighted shift. It is easy to see that the mean shift is the mean of this image.
-
 \subsection{Other tracking methods}
-This section describes other methods of tracking or object localisation explored in this project. Not all methods are used in the experimentation section, though all have been explored and a short description is therefore justified.
+This section describes other methods of tracking or object localisation explored in this project. Not all methods are used in the experimentation section, though all have been explored and a short description is therefore justified. Furthermore the intuition gained with Brute force tracking will come to use in our discussion of the Mean-shift tracker.
 
 \subsubsection{Histogram back projection}
 With a PDF representing the object to be tracked(target), we can take any picture, and assign every pixel in that image the probability attached to the corresponding bin in the PDF. In this manner pixels which are assigned a high probability, are similar to many pixels in the target, since it falls in a bin with large probability. Likewise pixels with a low probability are largely dissimilar. The target canthen be found in a region of the image which has high average probability. The problem with this approach is that it only looks at the dominant colors in the target and not to the similarity of the PDFs between regions. Furthermore, it requires an exhaustive assignment of probabilities to all pixels.
 
 \subsubsection{Brute force}
-So we are talkign about this because it is interstingly silly. We want to say meanshift tracker is less computationally complex and therefore faster. 
-First the tracked object is modeled by computing a color histogram; the target model. In the next frame a new color histogram is computed on every location; these are the candidate models. The target model is compared with all candidate models using a distance measure. The new location is determined by the location of the candidate histogram with the lowest distance.
-		
-\subsubsection{Semi Brute force}
-Using the fact that we work with 25 frames every second and objects are moving within a maximum speed, an assumption can be made that the object location should be close to the previous location. This optimization ignores a lot of unnecessary computations.
+%So we are talkign about this because it is interstingly silly. We want to say meanshift tracker is less computationally complex and therefore faster. 
+As with histogram back projection, first a PDF, the target model, is computed to model the object to be tracked. In a new frame color histograms, are computed at every location; these are the candidate models. The target model is compared with all candidate models using a distance measure. The new location is determined by the location of the candidate histogram with the lowest distance.
 
-	
+One optimization makes use of the knowledge that we work with multiple frames per second and that objects and camera move within a reasonable range of speeds. Therefore, an assumption can be made that the object location should be close to the previous location, thus only locations that can be reached within the range of reasonable speeds need to be considered. This makes the brute force approach somewhat more tractable. 
+
+An intuition about brute force tracking can be obtained by considering an image for which at every location the color has been replaced by the Bhattacharyya distance for the image region centered at that location, compared to our target model. The resulting image can be seen as a height map, where the highest points are those which are theleast similar to the target model, while the lowest are most similar. If one drops a marble onto this height map at the last known location of our target, the marble will roll to and stop at the locally lowest point. All points for which the marble will roll to a specific local minimum is the basement of attraction of that minimum. 
+
+
+\subsection{Meanshift}
+The thought behind the mean-shift algorithm is the following. Instead of computing all Bhattacharyya distances in a region close to the last known object position, why not take steps towards the local minimum of the Bhattacharyya distance. Therefore we need to create a shift vector which indicates in what direction and how big a step needs to be taken to obtain the lowest Bhattacharyya distance. If we are close to the local minimum, small steps are prudent while when further away larger steps are allowed. 
+
+The shift vector is computed in the following manner, first weights for evey bin are calculated, in the following manner\footnote{For the derivation we refer to \cite{mean_shift}\label{fn:derivation_refer}}:
+
+\begin{equation}
+\label{eq:weights}
+w(u) = \sqrt{\frac{q(u)}{p(u)}}
+\end{equation} %TODO klopt dit?
+where $w(u)$ is the weight, $q(u)$ is the target model, $p(u)$ is the candidate model all for bin $u$.
+
+As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$, will be close to 1, which can be considered a neutral weight, makes sense if you consider that the probability mass in both bins is similar thus no shift is needed. $\textrm{if }p(u) > q(u) \rightarrow w(u) < 1$.  $\textrm{if }p(u) < q(u) \rightarrow w(u) > 1$. Thus the weights are large for bins in  which have low probability mass in the candidate model, but height mass in the target model. Every location in the candidate region "pulls" at the center of the candiate region  weight of its coresponding bin times the distance to the center. Thus a location that lies far from the current center which has a large bin weight "pulls" hardest at the center, while either locations close to the center or with low weights pull less hard. The mean of this pull at the center, when normalised, is the shift vector. Which is calculated as follows, let $v_{shift}$ be the shift vector and $x$ be a normalised pixel location, with the center of the candidate region as the origin, $Pixels$ be all pixel locations in the candidate region, $b(x)$ the bin corresponding to $x$ and $w(b(x))$ the weight of the bin corresponding to the pixel at location $x$. The following equation gives us the calculation of the mean shift vector\footref{fn:derivation_refer}:
+
+\begin{equation}
+\label{eq:shift vector}
+v_{shift}=\frac{\sum_{x\in Pixels} x \cdot w(b(x))}{\sum_{x\in Pixels} w(b(x))}
+\end{equation} %TODO klopt dit?
+    
+For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
+ 
+Bringing this all together in one algorithm, first the target model is obtained. Next, in every new frame the mean-shift algorithm starts at the last known position of the object, on this first candidate location a candidate model is created by computing the color histogram. Using both candidate and target models, $w(u)$ is computed for every bin, after which through the weighted shift or "pull" from every location the mean shift vector $v_{shift}$ can be obtained. Untill the shift vector is smaller than a pixel distance this is repeated. The resulting location is a local minimum and will be used as the location where the tracked object was found. This process is repeated for every image in the video \footnote{some checks and precautions are prudent, such as checking that the Bhattacharyya distance has indeed become less after a shift, or caution for large steps which "overshoot" the local minimum. }.
+
+The mean-shift algorithm does not exhaustively compute all Bhattacharyya distances at locations in a region where the target might be found, but rather steps towards a local minimum of the Bhattacharya, thus making this algorithm more tractable. One main drawback is that the tracked object cannot move too much from the last known position, this would mean that the current position falls outside the basement of attraction of the target and will thus not be found. 
+
+%problems tracking, 
+% occulusion
+% taking over the track by a different object
+% changing lighting conditions
+% moving out of the local search region\ basement of attraction.	
 
 	
 	% TODO 
