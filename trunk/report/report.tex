@@ -24,46 +24,27 @@
 \section{Introduction}
 
 	Videos are ubiquitous; in the United Kingdom it has been claimed that there is one observation camera per 14 citizens \footnote{
-
 Rt Hon David Davis MP, June 12 2008, speech:"It is incumbent upon me to take a stand" 
-
 \url{http://www.conservatives.com/News/Speeches/2008/06/David_Davis_It_is_incumbent_upon_me_to_take_a_stand.aspx}
-
 }. YouTube.com, the largest video website in the USA with a marketshare of 40\% of all watched online videos serves more than 10 Billion movies a month\footnote{comScore Video Metrix, August 2009 
-
 \url{http://comscore.com/Press_Events/Press_Releases/2009/9/Google_Sites_Surpasses_10_Billion_Video_Views_in_August}}.
-
 	Furthermore, the amount of videos uploaded to the site through mobile phones is growing exponentially \footnote{The Official YouTube Blog, June 25 2009, blogpost:"Mobile Uploads to YouTube Increase Exponentially" 
-
 \url{http://youtube-global.blogspot.com/2009/06/mobile-uploads-to-youtube-increase_5122.html}}. 
-
-	From such facts, it is clear that the increasing signifance of video content, ranging from the practical to recreational, is undeniable. This plethora of video content makes automated video analysis desirable. Ideally we would like to analyse videos to be able to extract their content. This includes making them accessible for search or to alert the viewer of important developments. One of these analyses is tracking an object through multiple frames of video.
-
-
+From such facts, it is clear that the increasing signifance of video content, ranging from the practical to recreational, is undeniable. This plethora of video content makes automated video analysis desirable. Ideally we would like to analyse videos to be able to extract their content. This includes making them accessible for search or to alert the viewer of important developments. One of these analyses is tracking an object through multiple frames of video.
 
 In this paper tracking is understood as identifying an object at a location in a video frame that is consistent with locations found in previous video frames, given an object description. An example of a inconsistent location would be that of an object previously on the left side between frames jumped to the right side of the videoframe. Generally, tracking can be done in two distinct manners; model based and appearance based. 
-
 The former approach begins by building a substantial descriptive model of the object to be tracked. One can think of a wireframe model of the object together with texture or color information. In every frame this model is searched for, and the location that resembles the model best is the location of the relevant object.  A problem with this approach is that a substantial descriptive model has to be constructed for every conceivable object to be tracked.  Because of this tedious task, this approach can only be applied to small specialized domains.  
 
-
-
 This paper, however, will analyse an instance of the latter, appearance based, approach. This approach does not build a full model for tracking, but rather it looks at the appearance of an object and searches for regions that appear the same.  This is thus not a substancial descriptive model; rather it is an appearance based model. The underlying assumption behind this way of tracking is that small local features of the tracked object appear the same over multiple frames. %One such feature is color.
-
 The appearance based tracker discussed in this paper is the mean-shift tracker. 
 
-
-
 Color is the feature that will be tracked, so different color models will be presented and applied. Following this, subsequent tracking results on different videos for both trackers will be discussed. Specifically, we want to explain through experiments how the mean-shift tracker behaves under varying video conditions (such as occlusion and objects of varying scales), and what the influence of the used color model is.
-
 	As said at the beginning of this section, videos are pervasive, and their analysis should therefore ideally be done in realtime. The speed of the tracker will, therefore, also be discussed. 
 
-	
-
 	This paper is organised as follows:  after the introduction of the topic in section 1, the theory behind the used trackers and color models will be discussed in section 2.
-
 	Section 3 will be devoted to the implementation of the presented theories. The experimental setup, a description of the data, subsequent results and their discussion will be presented in section 4. 
-
 	Finally, section 5 will present the main conclusions on color based mean shift tracking.
+
 
 
 
@@ -466,30 +447,29 @@ During the development it was noticed that most of the time of the mean-shift tr
 
 	\subsection{Brute force} 
 \subsubsection{Conclusions}
-As we look at table \ref{table:fase1} we can see different interesting results.
-First of all the tracker performed very well on the images that where not
-downsampled. Only for a very big binsize (32) the tracker failed. This can be
-interpreted as problem of overfitting. The big binsize causes the model to
-contain to much detail. If the model contains to much detail it cannot
-generalise among different poses of the soccerplayer and therefor looses track.
+From table \ref{table:fase1} we can observe different interesting results.
+First, the tracker performed very well on the images that where not
+downsampled. Only for a very large bin size (32), the tracker failed. This can be
+interpreted as problem of overfitting. The big bin size causes the model to
+contain too much detail. If the model contains too much detail, it cannot
+generalise among different poses of the soccer player and therefore loses track.
 
-The tracker performs generaly very bad on the downsampled image. This is a
-logical consequence as the downsampling uses no interpolation or smoothing at
-all causing the image to have a very bad quality. Only a few colorspaces
-survived, rg, H and HS. These colorspaces performed well because they are
-intensity invariant. Because the soccer player is moving he recieves different
+The tracker performs quite badly on the downsampled image. This is an obvious consequence, for  the downsampling uses no interpolation or smoothing at
+all, which results in an image with poor quality. Only a few colorspaces
+survived: rg, H and HS. These colorspaces performed well because they are
+intensity invariant. Because the soccer player is moving, he recieves different
 illumination at different locations. This different illumination on different
-locations holds for lots of tracking tasks, therefor intensity
-invariant colorspaces are very usefull.
+locations hold for many tracking tasks, therefore intensity
+invariant colorspaces are very useful.
 
-In fase two, where we introduce occlusion, we see again that only the intesity
-invariant colorspaces keep track of the player. Furthermore we see that the Hue
-colorspace only keeps track on very large bin sizes. This is because it uses
-only one dimension. The less dimensions a colorspace needs the more bins it
+In phase two, where we introduce occlusion, we see again that only the intensity
+invariant colorspaces keep track of the player. Furthermore, we see that the hue
+colorspace only keeps track on very large bin sizes, for it uses
+only one dimension. The fewer dimensions a colorspace needs, the more bins it
 needs to model a certain detail.
 
-Furthermore rg performs better than XY, we think this is because the green
-background of the soccerfield is modeled in more detail in the rg colorspace and
+Furthermore rg performs better than XY. This is likely because the green
+background of the soccer field is modeled in more detail in the rg colorspace and
 therefor rg has more discriminate power.
 
 
