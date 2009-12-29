@@ -418,6 +418,9 @@ During the development it was noticed that most of the time of the mean-shift tr
 	occluded by a player of another team. Moreover, to make it hard for the
 	tracker, a smaller region is interest is used. 
 
+	%TODO explain + and -
+
+
 	% TODO evt downsampling erin
 
 =======
@@ -428,11 +431,12 @@ During the development it was noticed that most of the time of the mean-shift tr
 
 	\subsection{Meanshift} 
 
+	% TODO figuur onderschrift
+	Different colorspace, downsample and binsizes tested in fase 1, +
+	means the tracker kept track for a minimum of 10 seconds. 
 	\begin{tabular}{l*{7}{r|}}
 		\label{table:fase1}
-		%\caption{Different colorspace, downsample and binsizes tested in fase 1}
 		scene	& 	colorspace	& downsampled & 4 & 8 & 16 & 32\\
-
 		\hline
 		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
 		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
@@ -520,3 +524,4 @@ different interpolation methods.
 \bibliographystyle{IEEEtran}
 \end{document}
 
+c
