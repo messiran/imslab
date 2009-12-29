@@ -376,26 +376,30 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 \section{Results} 
 
 	\subsection{Experimental Setup} 
-	In order to test the tracker, frames from a movie of a soccer match are used.  It is
-	a trivial task for humans to track these soccer players. It is interesting to
-	see how the mean shift algorithm compares.  
-	Because the players have colored clothing and they move on a green background, the tracker, with particular color configurations, should work. Furthermore it provides an appropriate setup to compare different
-	colorspaces .\\
+	In order to test the tracker, frames from a movie of a soccer match are
+	used.  It is a trivial task for humans to track these soccer players. It is
+	interesting to see how the mean shift algorithm compares.  Because the
+	players have colored clothing and they move on a green background, the
+	tracker, with particular color configurations, should work. Furthermore it
+	provides an appropriate setup to compare different colorspaces .\\
 
-	A single player is tracked. The player has variable speed because he is
-	at different points accelerating or decelerating. A problem would occur if a player is moving so fast
-	that he moves out of the region of interest in the next frame. In this instance, this is a problem because the players are relatively small and the camera had recorded 25
-	frames per second.
+	A single player is tracked. The player has variable speed because he is at
+	different points accelerating or decelerating. A problem would occur if a
+	player is moving so fast that he moves out of the region of interest in the
+	next frame. In this instance, this is a problem because the players are
+	relatively small and the camera had recorded 25 frames per second.
 	
 	In the first phase, we use a simple setup without occlusion. We downsampled
-	the image 2x without smoothing to test on data with bad quality.  We compare
-	the performance of mean shift on different colorspaces and different
-	binsizes.  We use 4 different colorspaces, RGB, XY, rg (normalised red and
-	green), H (hue) and HSV (hue, saturation, intensity). We also use 4 different bin sizes. With bin size is meant the number of bins per color channel used to model the
-	target/candidate histogram.
+	the image 2x without smoothing or interpolation to test on data with bad
+	quality.  We compare the performance of mean shift on different colorspaces
+	and different binsizes.  We use 4 different colorspaces, RGB, XY, rg
+	(normalised red and green), H (hue) and HSV (hue, saturation, intensity). We
+	also use 4 different bin sizes. With bin size is meant the number of bins
+	per color channel used to model the target/candidate histogram.
 
 	In the second phase we test on occlusion. During tracking, a player is fully
-	occluded by a player of another team. Moreover, to make it hard for the tracker, a smaller region is interest is used. 
+	occluded by a player of another team. Moreover, to make it hard for the
+	tracker, a smaller region is interest is used. 
 
 	% TODO evt downsampling erin
 
@@ -441,37 +445,42 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 \subsubsection{Conclusions}
 As we look at table \ref{table:fase1} we can see different interesting results.
 First of all the tracker performed very well on the images that where not
-downsampled. Only for a very high binsize (32) the tracker failed. This can be
-interpreted as a overfitting
+downsampled. Only for a very big binsize (32) the tracker failed. This can be
+interpreted as problem of overfitting. The big binsize causes the model to
+contain to much detail. If the model contains to much detail it cannot
+generalise among different poses of the soccerplayer and therefor looses track.
 
-is due
-to overfitting 
+The tracker performs generaly very bad on the downsampled image. This is a
+logical consequence as the downsampling uses no interpolation or smoothing at
+all causing the image to have a very bad quality. Only a few colorspaces
+survived, rg, H and HS. These colorspaces performed well because they are
+intensity invariant. Because the soccer player is moving he recieves different
+illumination at different locations. This different illumination on different
+locations holds for lots of tracking tasks, therefor intensity
+invariant colorspaces are very usefull.
 
-very bad on the downsampled images.
+In fase two, where we introduce occlusion, we see again that only the intesity
+invariant colorspaces keep track of the player. Furthermore we see that the Hue
+colorspace only keeps track on very large bin sizes. This is because it uses
+only one dimension. The less dimensions a colorspace needs the more bins it
+needs to model a certain detail.
 
-	%TODO compare with other scene
-	%make the comparison automatic, use wrapper function and write figure
-	%windows to file with binsize etc. as filename
+Furthermore rg performs better than XY, we think this is because the green
+background of the soccerfield is modeled in more detail in the rg colorspace and
+therefor rg has more discriminate power.
 
+
+%TODO compare with other scene
 \subsection{Discussion} % discussion of results
-
-performs bad on low binsize (obvious) and downsampled images (obvious)\\
-performs bad on a very high (32) a binsize even with not downsampled
-
-images, the high bin size causes to lose generalisation power (same object other pose)\\
-
-
-colorspace RGB and HSV only keeped track with a non downsampled image,
-that is probably because it uses intensity i
-
-
 \section{Conclusions} \label{sec:conc}
 \section{Future Work} \label{sec:fut}
-
 Observe how you can improve your design and them describe how you implemented this change or, for lack of time, describe how you would change your design. 
 e.g. a different color space or the number of bins in the histogram
 test the tracker also on a video of a domain other than soccer (or any other sport on a green field)
 
+Future work:
+It would be nice to perform tests on different scales of downsampling with
+different interpolation methods.
 
 
 % variable tracking window size 
