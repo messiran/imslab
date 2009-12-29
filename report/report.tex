@@ -406,11 +406,8 @@ During the development it was noticed that most of the time of the mean-shift tr
 
 	% TODO evt downsampling erin
 
-=======
-
-	binsize is per colorchannel
-
 	\subsection{Brute force} 
+	During development the bruteforce tracke was implemented, but later modified to the mean-shift tracker, therefore we will not give a comparison of all the results obtained for the mean shift tracker. A few anecdotal evidence to results can however be given. Computing the Bhattacharyya distance for every possible candidate region in an image is extremely slow, not to mention memory intensive\footnote{the MATLAB approach of using sliding windows creates memory problems.}. However, if a sufficiently large region around the last known position is selected the object is tracked well, though occlusion remains a problem. In one instance during a track in the voetbal dataset, a player was tracked from left to right, while a teammate passed eight to left in front of the tracked individual. The track of the 1st individual was lost while the second was now the new tracked target. Since they were teammates they were both wearing the same sporting outfits so, this confusing tracking behaviour is not unforseen if only color is used. Usually the track was well though with a large enough region to seach around the last known object position. The choice of the right region to exhaustively search can be related to the basin of attraction in the mean shift tracker, where if the player moves so far that the last known position falls outside of the basin of attracktion of the ne position of the tracked object, the track is lost.
 
 	\subsection{Meanshift} 
 
