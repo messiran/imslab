@@ -111,7 +111,7 @@ A PDF as described above creates a function over the whole color space, (for RGB
 \subsubsection{Epanechnikov Weighting}
 Histograms so far weight every color in an image region equally. However, it is reasonable to assume that the color near the center of the region is more important than the color near the borders. Therefore a weighting kernel is used to assign a larger importance to colors near the center than to colors near the border.
 
-The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}, where "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathds{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}. The following equation describes the Epanechnikov profile and subsequent kernel: 
+The mean shift tracker uses a kernel with Epanechnikov profile \cite{mean_shift_epan}, where "the profile of kernel K is defined as a function $k:[0,\infty)\rightarrow\mathbb{R}$ such that $K(x)=k(\|x\|^2)$."\cite{mean_shift}. The following equation describes the Epanechnikov profile and subsequent kernel: 
 
 Let $x$ be a normalised location, such that the borders of our image region lie at distance 1. Then the Epanechnikov profile is
 
@@ -171,16 +171,16 @@ w(u) = \sqrt{\frac{q(u)}{p(u)}}
 \end{equation} %TODO klopt dit?
 where $w(u)$ is the weight, $q(u)$ is the target model, $p(u)$ is the candidate model all for bin $u$.
 
-As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$, will be close to 1, which can be considered a neutral weight, makes sense if you consider that the probability mass in both bins is similar thus no shift is needed. $\textrm{if }p(u) > q(u) \rightarrow w(u) < 1$.  $\textrm{if }p(u) < q(u) \rightarrow w(u) > 1$. Thus the weights are large for bins in  which have low probability mass in the candidate model, but height mass in the target model. Every location in the candidate region "pulls" at the center of the candiate region  weight of its coresponding bin times the distance to the center. Thus a location that lies far from the current center which has a large bin weight "pulls" hardest at the center, while either locations close to the center or with low weights pull less hard. The mean of this pull at the center, when normalised, is the shift vector. Which is calculated as follows, let $v_{shift}$ be the shift vector and $x$ be a normalised pixel location, with the center of the candidate region as the origin, $Pixels$ be all pixel locations in the candidate region, $b(x)$ the bin corresponding to $x$ and $w(b(x))$ the weight of the bin corresponding to the pixel at location $x$. The following equation gives us the calculation of the mean shift vector\footref{fn:derivation_refer}:
+As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$, will be close to 1, which can be considered a neutral weight, makes sense if you consider that the probability mass in both bins is similar thus no shift is needed. $\textrm{if }p(u) > q(u) \rightarrow w(u) < 1$.  $\textrm{if }p(u) < q(u) \rightarrow w(u) > 1$. Thus the weights are large for bins in  which have low probability mass in the candidate model, but height mass in the target model. Every location in the candidate region "pulls" at the center of the candiate region  weight of its coresponding bin times the distance to the center. Thus a location that lies far from the current center which has a large bin weight "pulls" hardest at the center, while either locations close to the center or with low weights pull less hard. The mean of this pull at the center, when normalised, is the shift vector. Which is calculated as follows, let $v_{shift}$ be the shift vector and $x$ be a normalised pixel location, with the center of the candidate region as the origin, $Pixels$ be all pixel locations in the candidate region, $c(x)$ be the color of a pixel at location $x$, $b(c(x))$ the bin corresponding to color $c(x)$ and $w(b(c(x)))$ the weight of the bin corresponding to the color of the pixel at location $x$. The following equation gives us the calculation of the mean shift vector\footref{fn:derivation_refer}:
 
 \begin{equation}
 \label{eq:shift vector}
-v_{shift}=\frac{\sum_{x\in Pixels} x \cdot w(b(x))}{\sum_{x\in Pixels} w(b(x))}
+v_{shift}=\frac{\sum_{x\in Pixels} x \ w(b(c(x)))}{\sum_{x\in Pixels} w(b(c(x)))}
 \end{equation} %TODO klopt dit?
     
 For the intuition, when an object moved to the left, the weight values will be high on the left side. Furthermore the weights will be low on the right side because new information (different colors) entered the search window. 
  
-Bringing this all together in one algorithm, first the target model is obtained. Next, in every new frame the mean-shift algorithm starts at the last known position of the object, on this first candidate location a candidate model is created by computing the color histogram. Using both candidate and target models, $w(u)$ is computed for every bin, after which through the weighted shift or "pull" from every location the mean shift vector $v_{shift}$ can be obtained. Untill the shift vector is smaller than a pixel distance this is repeated. The resulting location is a local minimum and will be used as the location where the tracked object was found. This process is repeated for every image in the video \footnote{some checks and precautions are prudent, such as checking that the Bhattacharyya distance has indeed become less after a shift, or caution for large steps which "overshoot" the local minimum. }.
+Bringing this all together in one algorithm, first the target model is obtained. Next, in every new frame the mean-shift algorithm starts at the last known position of the object, on this first candidate location a candidate model is created by computing the color histogram. Using both candidate and target models, $w(u)$ is computed for every bin, after which through the weighted shift or "pull" from every location the mean shift vector $v_{shift}$ can be obtained. Untill the shift vector is smaller than a pixel distance this is repeated. The resulting location is a local minimum and will be used as the location where the tracked object was found. This process is repeated for every image in the video\footnote{some checks and precautions are prudent, such as checking that the Bhattacharyya distance has indeed become less after a shift, or caution for large steps which "overshoot" the local minimum. }.
 
 The mean-shift algorithm does not exhaustively compute all Bhattacharyya distances at locations in a region where the target might be found, but rather steps towards a local minimum of the Bhattacharya, thus making this algorithm more tractable. One main drawback is that the tracked object cannot move too much from the last known position, this would mean that the current position falls outside the basement of attraction of the target and will thus not be found. 
 
@@ -203,7 +203,11 @@ The mean-shift algorithm does not exhaustively compute all Bhattacharyya distanc
 	% smaller then a certain convergence threshold, for example 1 pixel.
 
 \section{Implementation}
-\subsection{Epanechnikov Kernel}
+The implementation of the mean-shift algorithm generally follows the implementation as discussed in \cite{mean_shift}. However, there are some noteworthy differences as well as some practical issues worth discussing in the following section.
+
+\subsection{Mean-shift paper differences}
+\subsubsection{Epanechnikov Kernel}
+
 Let $x = (x_1,x_2)$ be a 2 dimensional vector indicating a normalised pixel location, such that after some manipulation we derive
 \begin{equation}
 \label{eq:epanechnikov_kernel2}
@@ -211,6 +215,8 @@ K_E(x) = \left\{ \begin{array}{cl}
   \frac{2}{\pi} (1-x_1^2 + x_2^2) & \textrm{if } \sqrt{x_1^2 + x_2^2} \leq 1 \\
   0 & \textrm{otherwise} \end{array}\right.
 \end{equation}
+
+\subsection{Speed considerations}
 
 Other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
 \section{Results} 
