@@ -3,6 +3,7 @@ TODO:
 Test (tjerk):
 make automatic testing script to test all different parameters [DONE]
 test on other scene (snowboard)
+	only 1 colorspace
 test on brute force
 
 Cleanup code:
@@ -23,17 +24,21 @@ Read whole report:
 
 
 planning old:
-Di avond:
-	Bart code opschonen
-	Bart evt nog aan scalable window
-Wo:
-	Tjerk resultaten en deel verslag
-Do:
-	Bart verslag afmaken, deadline 19u
-Do avond:
-	Tjerk 19u 1 uur latexen
-	Verslag nog een keer doornemen
 	
+
+Experiment setup
+why this soccerplayer
+same ROI
+
+Data
+Results:
+
+
+
+
+19u
+
+3,5 uur
 
 
 

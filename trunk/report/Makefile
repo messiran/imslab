@@ -1,10 +1,10 @@
 REPORT = report
 
 all:
-	#latex $(REPORT)
+	latex $(REPORT)
 	#bibtex $(REPORT)
 	#bibtex $(REPORT)
-	#latex $(REPORT)
+	latex $(REPORT)
 	latex $(REPORT)
 	dvipdf $(REPORT)
 
