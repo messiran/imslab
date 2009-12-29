@@ -381,11 +381,13 @@ For a new frame
 \item go to the next frame and goto \ref{start}
 \end{enumerate}
 
-A difference with the meanshift tracker as presented in \cite{mean_shift} is that we do not  abundantly check if the distance is indeed decreased at every step. Also, the "overshoot" prevention of taking half a shift step was not found to be required. Another difference, is the modified  Epanechnikov kernel other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
+A difference with the meanshift tracker as presented in \cite{mean_shift} is that we do not abundantly check if the distance is indeed decreased at every step. Also, the "overshoot" prevention of taking half a shift step was not found to be required. Another difference, is the modified  Epanechnikov kernel other than the mean shift tracker in \cite{mean_shift} we do not use a circular kernel but a square kernel such that all four corners lay at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
+
+\subsection{variable window sizes}
+The mean-shift algorithm was also implemented with variable window sizes, this makes the algorithm more complex. For instance with a fixed windowsize the Epanechnikov kernel can be pre-computed and used whenever a histogram needs to be computed, however with differing windowsizes the Epanechnikov kernel changes size and needs to be computed on a case by case basis. The variable windowsize is implemented as follows, once the mean-shit has sub-pixel magnitude and thus the shifting terminates, the resulting location is fixed. Centered at this location regions 1 pixel larger or smaller in both principal directions are taken as candidate regions. The region that has the lowest Bhattacharyya distance between the candidate model and target model will be the new windowsize.     
   
 \subsection{Speed considerations}
 During the development it was noticed that most of the time of the mean-shift tracker was spent loading and writing the tracked video frames. Therefore, all frames are pre-loaded in memory before the tracking starts. This has the benefit that the tracking is extremely fast, with the used datasets, tracking on a singlecore@3Ghz consumer grade PC, is more than 10x faster than real time, if the loading and saving of the images are not measured. The downside of this approach is that the computer needs to keep all frames stored in memory 
-
 
 
 
