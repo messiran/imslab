@@ -7,7 +7,7 @@
 \documentclass[a4paper,11pt]{article}
 
 \usepackage{homework}
-% \usepackage{graphicx, subfigure}
+\usepackage{graphicx, subfigure}
 % \usepackage{verbatim}
 % \usepackage{algorithm, algorithmic}
 % \usepackage{amsmath, amsthm, amssymb}
@@ -374,7 +374,6 @@ During the development it was noticed that most of the time of the mean-shift tr
 
 
 \section{Results} 
-
 	\subsection{Experimental Setup} 
 	In order to test the tracker, frames from a movie of a soccer match are
 	used.  It is a trivial task for humans to track these soccer players. It is
@@ -401,46 +400,49 @@ During the development it was noticed that most of the time of the mean-shift tr
 	occluded by a player of another team. Moreover, to make it hard for the
 	tracker, a smaller region is interest is used. 
 
-	%TODO explain + and -
-
-
-	% TODO evt downsampling erin
-
 	\subsection{Brute force} 
 	During development the bruteforce tracke was implemented, but later modified to the mean-shift tracker, therefore we will not give a comparison of all the results obtained for the mean shift tracker. A few anecdotal evidence to results can however be given. Computing the Bhattacharyya distance for every possible candidate region in an image is extremely slow, not to mention memory intensive\footnote{the MATLAB approach of using sliding windows creates memory problems.}. However, if a sufficiently large region around the last known position is selected the object is tracked well, though occlusion remains a problem. In one instance during a track in the voetbal dataset, a player was tracked from left to right, while a teammate passed eight to left in front of the tracked individual. The track of the 1st individual was lost while the second was now the new tracked target. Since they were teammates they were both wearing the same sporting outfits so, this confusing tracking behaviour is not unforseen if only color is used. Usually the track was well though with a large enough region to seach around the last known object position. The choice of the right region to exhaustively search can be related to the basin of attraction in the mean shift tracker, where if the player moves so far that the last known position falls outside of the basin of attracktion of the ne position of the tracked object, the track is lost.
 
 	\subsection{Meanshift} 
 
 	% TODO figuur onderschrift
-	Different colorspace, downsample and binsizes tested in fase 1, +
-	means the tracker kept track for a minimum of 10 seconds. 
-	\begin{tabular}{l*{7}{r|}}
-		\label{table:fase1}
-		scene	& 	colorspace	& downsampled & 4 & 8 & 16 & 32\\
-		\hline
-		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
-		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
-		soccer 	& 	rg	 		& 1x 		  			  & + & + & +  &  -\\
-		soccer 	& 	H	 		& 1x		 			  & + & + & +  &  -\\
-		soccer 	& 	HS	 		& 1x		  			  & + & + & +  &  -\\
-		soccer 	& 	HSV	 		& 1x		  			  & + & + & +  &  -\\
-		soccer 	& 	RGB	 		& 2x		  			  & - & - & -  &  -\\
-		soccer 	& 	rg	 		& 2x 		  			  & - & + & -  &  -\\
-		soccer 	& 	H	 		& 2x		  			  & - & + & -  &  -\\
-		soccer 	& 	HS	 		& 2x		  			  & - & + & -  &  -\\
-		soccer 	& 	HSV	 		& 2x		  			  & - & - & -  &  -\\
+	\begin{table}
+		\centering
+		\caption{Meanshift performance tested on colorspace, downsamplerate and
+		binsize. + means the tracker kept track for a minimum of 10 seconds.}
 
-	\end{tabular}	
+		\begin{tabular}{l*{7}{r|}}
+			\label{table:fase1}
+			scene	& 	colorspace	& downsampled 		   	& 4 & 8 & 16 & 32\\
+			\hline
+			soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
+			soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
+			soccer 	& 	rg	 		& 1x 		  			  & + & + & +  &  -\\
+			soccer 	& 	H	 		& 1x		 			  & + & + & +  &  -\\
+			soccer 	& 	HS	 		& 1x		  			  & + & + & +  &  -\\
+			soccer 	& 	HSV	 		& 1x		  			  & + & + & +  &  -\\
+			soccer 	& 	RGB	 		& 2x		  			  & - & - & -  &  -\\
+			soccer 	& 	rg	 		& 2x 		  			  & - & + & -  &  -\\
+			soccer 	& 	H	 		& 2x		  			  & - & + & -  &  -\\
+			soccer 	& 	HS	 		& 2x		  			  & - & + & -  &  -\\
+			soccer 	& 	HSV	 		& 2x		  			  & - & - & -  &  -\\
+		\end{tabular}	
+	\end{table}
 
-	\begin{tabular}{l*{8}{r|}}
-		scene	& 	colorspace	&  2 & 4 & 8 & 16 & 32\\
-		\hline
-		soccer 	& 	RGB	 		&  - & - & - & - & -\\
-		soccer 	& 	XY	 		&  - & - & + & - & -\\
-		soccer 	& 	rg	 		&  - & + & + & - & +\\
-		soccer 	& 	H	 		&  - & - & - & + & +\\
-		soccer 	& 	HSV	 		&  - & - & - & - & -\\ 
-	\end{tabular}	
+	\begin{table}
+		\centering
+		\caption{Mean shift performance tested on colorspace and binsize for a
+		scene containing occlusion.} 
+		\begin{tabular}{l*{8}{r|}}
+			scene	& 	colorspace	&  2 & 4 & 8 & 16 & 32\\
+			\hline
+			soccer 	& 	RGB	 		&  - & - & - & - & -\\
+			soccer 	& 	XY	 		&  - & - & + & - & -\\
+			soccer 	& 	rg	 		&  - & + & + & - & +\\
+			soccer 	& 	H	 		&  - & - & - & + & +\\
+			soccer 	& 	HSV	 		&  - & - & - & - & -\\ 
+		\end{tabular}	
+	\end{table}	
 
 	\subsection{Brute force} 
 \subsubsection{Conclusions}
@@ -469,7 +471,28 @@ Furthermore rg performs better than XY. This is likely because the green
 background of the soccer field is modeled in more detail in the rg colorspace and
 therefor rg has more discriminate power.
 
+An example where the tracker fails can be seen in Figure 1. On the
+otherhand an example of a succesfull tracking result can be seen in
+Figure 2. 
 
+
+\begin{figure}[!ht]
+\label{fig:RGB_8}
+\centering
+\includegraphics[width=18cm]{images/RGB_8_eps}
+\caption{Tracking performance in RGB colorspace modeled with 8 bins per channel.
+The tracker loses track at the moment of occlusion.}
+\label{fig:rg}
+\end{figure}
+
+\begin{figure}[!ht]
+\label{fig:rg_8}
+\centering
+\includegraphics[width=18cm]{images/rg_8_eps}
+\caption{Tracking performance in rg colorspace modeled with 8 bins per channel.
+The tracker keeps track even if the player is totally occluded.}
+\end{figure}
+% 
 %TODO compare with other scene
 \subsection{Discussion} % discussion of results
 \section{Conclusions} \label{sec:conc}
@@ -495,12 +518,6 @@ test the tracker also on a video of a domain other than soccer (or any other spo
 
 \section{References} 
 
-% \begin{figure}[!ht]
-% \centering
-% \includegraphics[height=7cm]{img/fprate}
-% \caption{The false positive rate per layer, averaged over the test set.}
-% \label{fig:fprate}
-% \end{figure}
 
 \renewcommand\bibname{References}
 \bibliography{references}
