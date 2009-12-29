@@ -375,32 +375,27 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 
 \section{Results} 
 
-	\subsection{Experimental setup} 
-	To test the tracker we used the frames from a movie of a soccermatch.  It is
-	a trivial task for humans to track these soccerplayers. It is interesting to
-	see how the mean shift algorithm performs.  
-	The players have colored clothing and they move on a green background. This
-	provides an easy setup where the tracker at least for a certain colorspace
-	should work. Furthermore it provides a 'geschikt' setup to compare different
-	colorspaces.\\
+	\subsection{Experimental Setup} 
+	In order to test the tracker, frames from a movie of a soccer match are used.  It is
+	a trivial task for humans to track these soccer players. It is interesting to
+	see how the mean shift algorithm compares.  
+	Because the players have colored clothing and they move on a green background, the tracker, with particular color configurations, should work. Furthermore it provides an appropriate setup to compare different
+	colorspaces .\\
 
-	A single player is tracked, the player has variable speed because he is
-	heavily accelerating. A problem would occur if a player is moving soi fast
-	that he moves out of the region of interest in the next frame. This is not
-	the case because the players are relatively small and the camera recorded 25
+	A single player is tracked. The player has variable speed because he is
+	at different points accelerating or decelerating. A problem would occur if a player is moving so fast
+	that he moves out of the region of interest in the next frame. In this instance, this is a problem because the players are relatively small and the camera had recorded 25
 	frames per second.
 	
-	In the first fase we use a simple setup without occlusion. We downsampled
+	In the first phase, we use a simple setup without occlusion. We downsampled
 	the image 2x without smoothing to test on data with bad quality.  We compare
 	the performance of mean shift on different colorspaces and different
 	binsizes.  We use 4 different colorspaces, RGB, XY, rg (normalised red and
-	green), H (hue) and HSV. We also use 4 different binsizes. With binsize we
-	mean the number of bins per colorchannel we use to model the
+	green), H (hue) and HSV (hue, saturation, intensity). We also use 4 different bin sizes. With bin size is meant the number of bins per color channel used to model the
 	target/candidate histogram.
 
-	In the second fase we test on occlusion. During tracking a player is fully
-	occluded by a player of another team. Furthermore we use a smaller region of
-	interest to make it hard for the tracker.
+	In the second phase we test on occlusion. During tracking, a player is fully
+	occluded by a player of another team. Moreover, to make it hard for the tracker, a smaller region is interest is used. 
 
 	% TODO evt downsampling erin
 
