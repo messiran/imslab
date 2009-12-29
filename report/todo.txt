@@ -5,6 +5,7 @@ make automatic testing script to test all different parameters [DONE]
 test on other scene (snowboard)
 	only 1 colorspace
 test on brute force
+test on occlusion
 
 Cleanup code:
 -remove old unnecessary code
