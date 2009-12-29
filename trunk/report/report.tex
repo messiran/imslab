@@ -376,6 +376,35 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 \section{Results} 
 
 	\subsection{Experimental setup} 
+	To test the tracker we used the frames from a movie of a soccermatch.  It is
+	a trivial task for humans to track these soccerplayers. It is interesting to
+	see how the mean shift algorithm performs.  
+	The players have colored clothing and they move on a green background. This
+	provides an easy setup where the tracker at least for a certain colorspace
+	should work. Furthermore it provides a 'geschikt' setup to compare different
+	colorspaces.\\
+
+	A single player is tracked, the player has variable speed because he is
+	heavily accelerating. A problem would occur if a player is moving soi fast
+	that he moves out of the region of interest in the next frame. This is not
+	the case because the players are relatively small and the camera recorded 25
+	frames per second.
+	
+	In the first fase we use a simple setup without occlusion. We downsampled
+	the image 2x without smoothing to test on data with bad quality.  We compare
+	the performance of mean shift on different colorspaces and different
+	binsizes.  We use 4 different colorspaces, RGB, XY, rg (normalised red and
+	green), H (hue) and HSV. We also use 4 different binsizes. With binsize we
+	mean the number of bins per colorchannel we use to model the
+	target/candidate histogram.
+
+	In the second fase we test on occlusion. During tracking a player is fully
+	occluded by a player of another team. Furthermore we use a smaller region of
+	interest to make it hard for the tracker.
+
+	% TODO evt downsampling erin
+
+=======
 
 	binsize is per colorchannel
 
@@ -383,140 +412,90 @@ Other than the mean shift tracker in \cite{mean_shift} we do not use a circular 
 
 	\subsection{Meanshift} 
 
-
-
 	\begin{tabular}{l*{7}{r|}}
-
+		\label{table:fase1}
+		\caption{Different colorspace, downsample and binsizes tested in fase 1}
 		scene	& 	colorspace	& downsampled & 4 & 8 & 16 & 32\\
 
 		\hline
-
 		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
-
 		soccer 	& 	RGB	 		& 1x		  			  & + & + & +  &  -\\
-
 		soccer 	& 	rg	 		& 1x 		  			  & + & + & +  &  -\\
-
 		soccer 	& 	H	 		& 1x		 			  & + & + & +  &  -\\
-
 		soccer 	& 	HS	 		& 1x		  			  & + & + & +  &  -\\
-
 		soccer 	& 	HSV	 		& 1x		  			  & + & + & +  &  -\\
-
 		soccer 	& 	RGB	 		& 2x		  			  & - & - & -  &  -\\
-
 		soccer 	& 	rg	 		& 2x 		  			  & - & + & -  &  -\\
-
 		soccer 	& 	H	 		& 2x		  			  & - & + & -  &  -\\
-
 		soccer 	& 	HS	 		& 2x		  			  & - & + & -  &  -\\
-
 		soccer 	& 	HSV	 		& 2x		  			  & - & - & -  &  -\\
 
 	\end{tabular}	
 
 	\begin{tabular}{l*{8}{r|}}
-
-		scene	& 	colorspace	& downsampled & 2 & 4 & 8 & 16 & 32\\
-
+		scene	& 	colorspace	&  2 & 4 & 8 & 16 & 32\\
 		\hline
-
-		soccer 	& 	RGB	 		& 1x		  			& - & - & - & - & -\\
-
-		soccer 	& 	XY	 		& 1x 		  			& - & - & + & -  &  -\\
-
-		soccer 	& 	rg	 		& 1x		 			& -  & + & + & - &  +\\
-
-		soccer 	& 	H	 		& 1x		  			& - & - & - & + &  +\\
-
-		soccer 	& 	HSV	 		& 1x		  			& -  & - & - & - & - \\ 
+		soccer 	& 	RGB	 		&  - & - & - & - & -\\
+		soccer 	& 	XY	 		&  - & - & + & - & -\\
+		soccer 	& 	rg	 		&  - & + & + & - & +\\
+		soccer 	& 	H	 		&  - & - & - & + & +\\
+		soccer 	& 	HSV	 		&  - & - & - & - & -\\ 
 	\end{tabular}	
 
+	\subsection{Brute force} 
 \subsubsection{Conclusions}
+As we look at table \ref{table:fase1} we can see different interesting results.
+First of all the tracker performed very well on the images that where not
+downsampled. Only for a very high binsize (32) the tracker failed. This can be
+interpreted as a overfitting
 
+is due
+to overfitting 
 
+very bad on the downsampled images.
 
 	%TODO compare with other scene
-
 	%make the comparison automatic, use wrapper function and write figure
-
 	%windows to file with binsize etc. as filename
 
 \subsection{Discussion} % discussion of results
 
 performs bad on low binsize (obvious) and downsampled images (obvious)\\
-
-
-
 performs bad on a very high (32) a binsize even with not downsampled
 
 images, the high bin size causes to lose generalisation power (same object other pose)\\
 
-		
 
 colorspace RGB and HSV only keeped track with a non downsampled image,
-
 that is probably because it uses intensity i
 
 
-
-
-
 \section{Conclusions} \label{sec:conc}
-
 \section{Future Work} \label{sec:fut}
 
 Observe how you can improve your design and them describe how you implemented this change or, for lack of time, describe how you would change your design. 
-
-
-
 e.g. a different color space or the number of bins in the histogram
-
 test the tracker also on a video of a domain other than soccer (or any other sport on a green field)
 
 
 
 % variable tracking window size 
-
-
-
 %TODO write something about kalman
-
-
-
 %TODO would be better to have a ground truth and compair the tracking
-
 %coordinates to the ground truth, no just a binary val (keeped track or not) is
-
 %used
-
-
-
-
 
 \section{References} 
 
-
-
 % \begin{figure}[!ht]
-
 % \centering
-
 % \includegraphics[height=7cm]{img/fprate}
-
 % \caption{The false positive rate per layer, averaged over the test set.}
-
 % \label{fig:fprate}
-
 % \end{figure}
 
-
-
 \renewcommand\bibname{References}
-
 \bibliography{references}
-
 \bibliographystyle{IEEEtran}
-
 \end{document}
 
