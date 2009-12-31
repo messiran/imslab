@@ -5,8 +5,8 @@ close all
 warning off all
 
 % set parameters
-paramsN = [4];
-paramsColor = [1];
+paramsN = [4, 8, 16, 32];
+paramsColor = [0,1,2,3];
 inpGetRoi = 1;
 
 % do loop for different parameters
