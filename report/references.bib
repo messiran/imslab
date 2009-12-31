@@ -1,66 +1,44 @@
 This file was created with JabRef 2.1 beta.
 Encoding: Cp1252
 
-@INPROCEEDINGS{naturaltext,
-  author = {Chen, Xiangrong and Yuille, A. L.},
-  title = {Detecting and reading text in natural scenes},
-  booktitle = {Computer Vision and Pattern Recognition, 2004. CVPR 2004. Proceedings
-	of the 2004 IEEE Computer Society Conference on},
-  year = {2004},
-  volume = {2},
-  pages = {II-366--II-373 Vol.2},
-  abstract = {This paper gives an algorithm for detecting and reading text in natural
-	images. The algorithm is intended for use by blind and visually
-	impaired subjects walking through city scenes. We first obtain a
-	dataset of city images taken by blind and normally sighted subjects.
-	From this dataset, we manually label and extract the text regions.
-	Next we perform statistical analysis of the text regions to determine
-	which image features are reliable indicators of text and have low
-	entropy (i.e. feature response is similar for all text images).
-	We obtain weak classifiers by using joint probabilities for feature
-	responses on and off text. These weak classifiers are used as input
-	to an AdaBoost machine learning algorithm to train a strong classifier.
-	In practice, we trained a cascade with 4 strong classifiers containing
-	79 features. An adaptive binarization and extension algorithm is
-	applied to those regions selected by the cascade classifier. Commercial
-	OCR software is used to read the text or reject it as a non-text
-	region. The overall algorithm has a success rate of over 90\% (evaluated
-	by complete detection and reading of the text) on the test set and
-	the unread text is typically small and distant from the viewer.},
-  citeulike-article-id = {3812995},
-  comment = {* text detection using AdaBoost on own feature set. Commercial OCR
-	packages for text recognition * ABBYY FineReader, TOCR, ReadIris
-	Pro 8},
-  doi = {10.1109/CVPR.2004.1315187},
-  journal = {Computer Vision and Pattern Recognition, 2004. CVPR 2004. Proceedings
-	of the 2004 IEEE Computer Society Conference on},
-  keywords = {ocr},
-  posted-at = {2008-12-20 04:11:27},
-  priority = {2},
-  url = {http://dx.doi.org/10.1109/CVPR.2004.1315187}
+@ARTICLE{mean_shift_epan,
+  author = {Comaniciu, D. and Meer, P.},
+  title = {Mean shift: a robust approach toward feature space analysis},
+  journal = {Pattern Analysis and Machine Intelligence, IEEE Transactions on},
+  year = {2002},
+  volume = {24},
+  pages = {603--619},
+  number = {5},
+  month = {August},
+  address = {Los Alamitos, CA, USA},
+  citeulike-article-id = {462300},
+  citeulike-linkout-0 = {http://doi.ieeecomputersociety.org/10.1109/34.1000236},
+  citeulike-linkout-1 = {http://dx.doi.org/10.1109/34.1000236},
+  citeulike-linkout-2 = {http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1000236},
+  day = {07},
+  doi = {10.1109/34.1000236},
+  issn = {0162-8828},
+  keywords = {image-analysis, mean-shift, segmentation},
+  owner = {Bart},
+  posted-at = {2006-01-14 10:50:03},
+  priority = {4},
+  publisher = {IEEE Computer Society},
+  timestamp = {2009.12.28},
+  url = {http://dx.doi.org/10.1109/34.1000236}
 }
 
-@MASTERSTHESIS{dlagnekov_thesis,
-  author = { Louka Dlagnekov },
-  title = { Video-based Car Surveillance: License Plate, Make, and Model Recognition
-	},
-  school = { University of California, San Diego },
-  year = { 2005 }
-}
-
-@TECHREPORT{dlagnekov_dataset,
-  author = {L. Dlagnekov and S. Belongie},
-  title = {UCSD/Calit2 Car License Plate, Make and Model Database},
-  year = {2005}
-}
-
-@TECHREPORT{dlagnekov_paper,
-  author = { Louka Dlagnekov and Serge Belongie },
-  title = { Recognizing Cars },
-  institution = { University of California, San Diego },
-  year = { 2005 },
-  number = { UCSD CSE Tech Report CS2005-0833 },
-  pdf = { Recognizing_Cars_Dlagnekov_Belongie.pdf }
+@ARTICLE{mean_shift,
+  author = {Comaniciu, Dorin and Ramesh, Visvanathan and Meer, Peter},
+  title = {Kernel-Based Object Tracking},
+  journal = {IEEE Trans. Pattern Anal. Mach. Intell.},
+  year = {2003},
+  volume = {25},
+  pages = {564--575},
+  number = {5},
+  address = {Washington, DC, USA},
+  doi = {http://dx.doi.org/10.1109/TPAMI.2003.1195991},
+  issn = {0162-8828},
+  publisher = {IEEE Computer Society}
 }
 
 @INBOOK{gevers_color,
@@ -75,59 +53,15 @@ Encoding: Cp1252
   timestamp = {2009.12.24}
 }
 
-@ARTICLE{viola,
-  author = {Viola, Paul and Jones, Michael J.},
-  title = {Robust Real-Time Face Detection},
-  journal = {International Journal of Computer Vision},
-  year = {2004},
-  volume = {57},
-  pages = {137--154},
-  number = {2},
-  month = {May},
-  abstract = {This paper describes a face detection framework that is capable of
-	processing images extremely rapidly while achieving high detection
-	rates. There are three key contributions. The first is the introduction
-	of a new image representation called the ldquoIntegral Imagerdquo
-	which allows the features used by our detector to be computed very
-	quickly. The second is a simple and efficient classifier which is
-	built using the AdaBoost learning algorithm (Freund and Schapire,
-	1995) to select a small number of critical visual features from
-	a very large set of potential features. The third contribution is
-	a method for combining classifiers in a ldquocascaderdquo which
-	allows background regions of the image to be quickly discarded while
-	spending more computation on promising face-like regions. A set
-	of experiments in the domain of face detection is presented. The
-	system yields face detection performance comparable to the best
-	previous systems (Sung and Poggio, 1998; Rowley et al., 1998; Schneiderman
-	and Kanade, 2000; Roth et al., 2000). Implemented on a conventional
-	desktop, face detection proceeds at 15 frames per second.},
-  address = {Hingham, MA, USA},
-  citeulike-article-id = {942195},
-  doi = {10.1023/B:VISI.0000013087.49260.fb},
-  issn = {0920-5691},
-  keywords = {boosting, face\_detection},
-  posted-at = {2008-07-23 16:24:33},
-  priority = {2},
-  publisher = {Kluwer Academic Publishers},
-  url = {http://dx.doi.org/10.1023/B:VISI.0000013087.49260.fb}
-}
-
-@ARTICLE{zhang,
-  author = {Zhang, H. and Jia, W. and He, X. and Wu, Q.},
-  title = {2006, Learning-Based License Plate Detection Using Global and Local
-	Features},
-  journal = {Proceedings International Conference on Pattern Recognition, page
-	to appear},
-  year = {2006},
-  citeulike-article-id = {1751300},
-  comment = {The authors combine two kinds of features for licence plate detection,
-	i.e. global statistics of scanning window and local haar features.
-	Global statistics are gradient density (LP have higher density of
-	edges) and density variance. The global features are at the beginning
-	of the cascade which might be very time consuming, the authors say
-	it is fast!},
-  keywords = {density, detection, features, global, gradient, licence, lpr, plate},
-  posted-at = {2007-10-10 17:30:38},
-  priority = {0}
+@INBOOK{gevers_invariant,
+  chapter = {9},
+  pages = {203-224},
+  title = {Color Feature Detection},
+  publisher = {CRC Press},
+  year = {2007},
+  editor = {Rastislav Lukac and Konstantinos N. Plataniotis},
+  author = {Theo Gevers and Joost van de Weijer and Harro Stokman},
+  owner = {Bart},
+  timestamp = {2009.12.28}
 }
 
