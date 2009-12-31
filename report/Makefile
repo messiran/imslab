@@ -2,8 +2,8 @@ REPORT = report
 
 all:
 	latex $(REPORT)
-	#bibtex $(REPORT)
-	#bibtex $(REPORT)
+	bibtex $(REPORT)
+	bibtex $(REPORT)
 	latex $(REPORT)
 	latex $(REPORT)
 	dvipdf $(REPORT)

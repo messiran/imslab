@@ -69,7 +69,7 @@ The XYZ color model, just like RGB is also a tri-stimulus model, however it is d
 
 \subsubsection{Normalised RGB and Normalised XYZ}
 
-In the RGB color model, a change in lighting intensity would make the responses of all three color channels increase proportionally to the intensity change. Through normalisation, the intensity is set to a fixed level of 1. This makes normalised RGB(rgb) invariant, to any factor which solely influences the intensity of the perceived object patch. Therefore, rgb is invariant to illumination intensity and geometric arrangements. rgb however is still not invariant to illumination color or highlights \cite{gevers_invariant}. 
+In the RGB color model, a change in lighting intensity would make the responses of all three color channels increase proportionally to the intensity change. Through normalisation, the intensity is set to a fixed level of 1. This makes normalised RGB (rgb) invariant, to any factor which solely influences the intensity of the perceived object patch. Therefore, rgb is invariant to illumination intensity and geometric arrangements. rgb however is still not invariant to illumination color or highlights \cite{gevers_invariant}. 
 
 The following equations describe the conversion from RGB to rgb, for each color channel respectively.  Let $I$ denote the intensity:
 \begin{eqnarray}
@@ -79,11 +79,11 @@ r &=& \frac{R}{I},\; g = \frac{G}{I},\; b = \frac{B}{I}
 \end{eqnarray}
 Two things are worth concidering here, first $r,g,b$ are undefined for black when $I=0$, this can be remedied by recognising that white black and grey are the same except for intensity. Thus black in rgb space should be the same as white or grey which is $r=g=b$. Last the rgb colorspace is 3-dimensional; however, since all 3 channels are normalised, it must be that $r+g+b=1$. Therefore, rgb is overdetermined as a 3-dimensional space and can be described in 2 dimensions $r,g$, where $b$ can be deduced through $b=1-(r+g)$.
 
-Similar to RGB, the device independent colorspace XYZ can be converted to a normalised XYZ(xyz).		
+Similar to RGB, the device independent colorspace XYZ can be converted to a normalised XYZ (xyz).		
 
 \subsubsection{HSV}
 
-The hue, saturation, value model(HSV) does not represent color as a tri-stimulus; rather it uses three color properties to describe a color. Hue describes the dominant wavelength, saturation describes how dominant this wavelength is with respect to the whole of the visual spectrum, last value indicates the brightness of the color response, similar to intensity. The HSV-space can be thought of as a cone, where the central axis ranges between black at the bottom and white on top, the value indicates the distance along this central axis. The angle around the axis is described by the hue, while saturation indicates the distance from the central axis to the edge of the cone. 
+The hue, saturation, value model (HSV) does not represent color as a tri-stimulus; rather it uses three color properties to describe a color. Hue describes the dominant wavelength, saturation describes how dominant this wavelength is with respect to the whole of the visual spectrum and value indicates the brightness of the color response, similar to intensity. The HSV-space can be thought of as a cone, where the central axis ranges between black at the bottom and white on top, the value indicates the distance along this central axis. The angle around the axis is described by the hue, while saturation indicates the distance from the central axis to the edge of the cone. 
 
 When we defenestrate all but the hue, we are left with a 1-dimensional color space\footnote{Note the difference between a color space and a color model. The latter induces the former. For instance, the RGB 3-dimensional color space arises from the tri-stimulus color model, with 1 dimension for each color channel.}.  We can derive hue $H$ from RGB as follows:
 \begin{equation}
@@ -95,11 +95,11 @@ Describing color in this manner is invariant to illumination and geometrical con
 
 \subsection{Histograms}
 
-In the previous section, various color models and their invariant properties were discussed. Once a color model has been chosen we are confronted with two problems; first, describing an object, and second, identifying an object in a videoframe given the object description and it's location in previous videoframes. These problems can be overcome with the use of histograms. This section describes histograms as a probability density function(PDF) over a color space. In further sections the histograms or PDFs that represent the object to be tracked will be called the target model.
+In the previous section, various color models and their invariant properties were discussed. Once a color model has been chosen we are confronted with two problems; first, describing an object, and second, identifying an object in a videoframe given the object description and it's location in previous videoframes. These problems can be overcome with the use of histograms. This section describes histograms as a probability density function (PDF) over a color space. In further sections the histograms or PDFs that represent the object to be tracked will be called the target model.
 
 We can describe an image patch containing an object by listing all the colors contained in the image patch as well as their relative frequencies. This yields a PDF over the color space, that describes the local color. This local color descriptor is scale invariant, since an object image patch of different dimension should still yield the same relative frequencies. The description is also shift and rotation invariant, since a rotated image of the object will again yield the same descriptor, and the exact coordinates of the image patch containing the object are irrelevant to the resulting descriptor. This object description, however, is not object orientation invariant since different sides of an object can have different colors. 
 
-A PDF as described above creates a function over the whole color space, (for RGB, if every color channel is described by a byte, this leads to $2^{24}$ different colors). This will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this paper the sizes of the bins are equal, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, this raises the question as to how to pick the correct bin size; bins that are too large lead to a PDF which is too coarse, and bins too small to a PDF that is too sparse. Therefore fine-tuning the number of bins is a delicate task of balancing between these two extremes. 
+A PDF as described above creates a function over the whole color space, (for RGB, if every color channel is described by a byte, this leads to $2^{24}$ different colors). This will lead to a PDF which is too sparse, since most colors will not be in the image patch. Therefore, we collect similar colors in bins, and calculate the relative frequencies for each bin. In this report the sizes of the bins are equal, thus every bin spans a equally sized portion of the color space. By accumulating colors in bins, we get a more coarse color description. The coarseness of the PDF is relevant since we want to use these PDFs to describe and compare local image descriptors. We want local image regions that look the same, to yield local color descriptors that are similar.  Choosing the correct bin size will take care of this. However, this raises the question as to how to pick the correct bin size; bins that are too large lead to a PDF which is too coarse, and bins too small to a PDF that is too sparse. Therefore fine-tuning the number of bins is a delicate task of balancing between these two extremes. 
 
 \subsubsection{Epanechnikov Weighting}
 
@@ -128,7 +128,7 @@ K_E(x) = \left\{ \begin{array}{cl}
   0 & \textrm{otherwise.} \end{array}\right.
 \end{equation}
 
-The Epanechnikov kernel is used because the derivative of the profile equals $-1$, which makes the derivation and implementation of the mean-shift tracker less troublesome than with another kernel though kernels such as Gaussians are feasable.
+The Epanechnikov kernel is used because the derivative of the profile equals $-1$, which makes the derivation and implementation of the mean-shift tracker less troublesome than with another kernel, though kernels such as Gaussians are feasable.
 
 \subsubsection{Bhattacharyya Distance}
 
@@ -155,11 +155,11 @@ This section will give a description of the brute force method, as a simple meth
 
 One optimization of the brute force tracker we explored, exploits the knowledge that video consists of multiple frames per second and that objects and camera move within a reasonable range of speeds. Therefore, it follows that the object location should be close to the previous location, and thus only locations that can be reached within the range of reasonable speeds need to be considered. This makes the brute force approach somewhat more tractable. 
 
-To understand brute force tracking intuitively, consider an image for which at every location the color has been replaced by the Bhattacharyya distance between the image region centered at that location and the target model. The resulting image can be seen as a height map, where the highest peaks represent the locations least similar to the target model, while the lowest are most similar. If one drops a marble onto this height map at the last known location of our target, the marble will roll to and stop at the locally lowest point. All points for which the marble will roll to a specific local minimum is the basin of attraction of that minimum. 
+To understand brute force tracking intuitively, consider an image for which at every location the color has been replaced by the Bhattacharyya distance between the image region centered at that location and the target model. The resulting image can be seen as a height map, where the highest peaks represent the locations least similar to the target model, while the lowest are most similar. If one drops a marble onto this height map at the last known location of our target, the marble will roll to and stop at the locally lowest point. All points for which the marble will roll to a specific local minimum are the basin of attraction of that minimum. 
 
 \subsection{Mean-Shift}
 
-The thought behind the mean-shift algorithm is the following: Instead of computing all Bhattacharyya distances in a region close to the last known object position, one could take steps towards the local minimum of the Bhattacharyya distance. Therefore we need to create a shift vector which indicates in what direction and how big a step needs to be taken move towards the lowest Bhattacharyya distance. If we are close to the local minimum, small steps are prudent, whereas further away larger steps are allowed. 
+The thought behind the mean-shift algorithm is the following: Instead of computing all Bhattacharyya distances in a region close to the last known object position, one could take steps towards the local minimum of the Bhattacharyya distance. Therefore we need to create a shift vector which indicates in what direction and how big a step needs to be taken move towards the lowest Bhattacharyya distance. If we are close to the local minimum, small steps are prudent, whereas further away larger steps are desired. 
 
 The shift vector is computed in the following manner, first weights for evey bin are calculated, in the following manner\footnote{For the derivation we refer to \cite{mean_shift}\label{fn:derivation_refer}}:
 \begin{equation}
@@ -168,7 +168,7 @@ w(u) = \sqrt{\frac{q(u)}{p(u)}}
 \end{equation} %TODO klopt dit?
 where $w(u)$ is the weight, $q(u)$ is the target model, $p(u)$ is the candidate model all for bin $u$.
 
-As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$, will be close to 1, which can be considered a neutral weight, the probability mass in both bins is similar thus no shift is needed. $\textrm{If }p(u) > q(u) \rightarrow w(u) < 1$ and $\textrm{if }p(u) < q(u) \rightarrow w(u) > 1$. Thus the weights are large for bins  which have low probability mass in the candidate model, but height mass in the target model. 
+As an intuition when $p(u)$ and $q(u)$ are of equal magnitude, $w(u)$ will be close to 1, which can be considered as a neutral weight, the probability mass in both bins is similar thus no shift is needed. $\textrm{If }p(u) > q(u) \rightarrow w(u) < 1$ and $\textrm{if }p(u) < q(u) \rightarrow w(u) > 1$. Thus the weights are large for bins  which have low probability mass in the candidate model, but height mass in the target model. 
 
 Every location in the candidate region "pulls" at the center of the candiate region with the weight of its corresponding bin times the relative location to the center. Thus a location that lies far from the current center which has a large bin weight "pulls" hardest at the center, while either locations close to the center or with low weights pull less hard. The mean of this pull at the center, when normalised, is the shift vector. Which is calculated as follows, let $v_{shift}$ be the shift vector and $x$ be a normalised pixel location, with the center of the candidate region as the origin, $Pixels$ be all pixel locations in the candidate region, $c(x)$ be the color of a pixel at location $x$, $b(c(x))$ the bin corresponding to color $c(x)$ and $w(b(c(x)))$ the weight of the bin corresponding to the color of the pixel at location $x$. The following equation gives us the calculation of the mean-shift vector\footref{fn:derivation_refer}:
 \begin{equation}
@@ -222,11 +222,11 @@ For a new frame:
 A difference with the mean-shift tracker as presented in \cite{mean_shift} is that there are no abundant checks if the distance is indeed decreased at every step. Also, the "overshoot" prevention of taking half a shift step was not found to be required. Another difference, is the modified  Epanechnikov kernel, other than the mean-shift tracker in \cite{mean_shift} this implementation does not use a circular kernel but a square kernel such that all four corners lie at distances $x=(\pm \sqrt{\frac{1}{2}},\pm \sqrt{\frac{1}{2}})$. The total weight of the kernel is then normalised to 1.
 
 \subsection{Variable Window Sizes}
-A version of the mean-shift algorithm with variable window sizes, was implemented, this algorithm was more complex. For instance, with a fixed window size the Epanechnikov kernel can be pre-computed and used whenever a histogram needs to be computed. However with differing window sizes the Epanechnikov kernel changes size and needs to be computed on a case by case basis. 
-The variable window size was implemented as follows, once the mean-shift has sub-pixel magnitude and thus the shifting terminates, the resulting location is fixed. Centered at this location regions, 1 pixel larger or smaller in both principal directions, are taken as candidate regions. The region that has the lowest Bhattacharyya distance between the candidate model and target model will be the new window size.     
+A version of the mean-shift algorithm with variable window sizes, was implemented, this algorithm was more complex. For instance, with a fixed window size the Epanechnikov kernel can be pre-computed and used whenever a histogram needs to be computed. However with differing window sizes the Epanechnikov kernel changes size and needs to be computed on a 'case by case' basis. 
+The variable window size was implemented as follows, once the mean-shift has sub-pixel magnitude and thus the shifting terminates, the resulting location is fixed. Centered at this location regions, 1 pixel larger or smaller in both vertical and horizontal directions, are taken as candidate regions. The region that has the lowest Bhattacharyya distance between the candidate model and target model will be the new window size.     
   
 \subsection{Speed considerations}
-During the development it was noticed that most of the time of the mean-shift tracker was spent loading and writing the tracked video frames. Therefore, all frames are pre-loaded in memory before the tracking starts. This has the benefit that the tracking is extremely fast. On the datasets presented in the next section, tracking(excluding the loading and saving of the frames) on a singlecore@3Ghz consumer grade PC was more than 10x faster than real time. The downside of this approach is that the computer needs to keep all frames stored in memory; this might thus become a bottleneck\footnote{The authors did not observe this bottleneck, with any of the short movies described in this document.}.
+During the development it was noticed that most of the time of the mean-shift tracker was spent loading and writing the tracked video frames. Therefore, all frames are pre-loaded in memory before the tracking starts. This has the benefit that the tracking is extremely fast. On the datasets presented in the next section, tracking (excluding the loading and saving of the frames) on a singlecore@3Ghz consumer grade PC was more than 10x faster than real time. The downside of this approach is that the computer needs to keep all frames stored in memory; this might thus become a bottleneck\footnote{The authors did not observe this bottleneck, with any of the short movies described in this document.}.
 
 \section{Evaluation} 
 Several experiments were performed to test the performance and robustness of the mean-shift tracker. In this section we will describe the datasets and the experimental setup, after which the results will be presented and discussed.
@@ -236,10 +236,10 @@ It is worth noting that all experiments use the exact same target region to comp
 
 \subsubsection{Dataset Soccer}
 The first dataset consists of frames from a movie of a soccer match, see Figure 1-2. It is a trivial task for 
-humans to track these soccer players, therefore, it is interesting to see how the mean-shift algorithm compares.  
+humans to track these soccer players, therefore, it is interesting to see how the mean-shift algorithm performs.  
 Players have colored clothing and they move on an almost uniform green background. The tracker, with the right configuration, should work on this domain. Furthermore it provides an appropriate setup to compare different colorspaces.
 
-Multiple players can be tracked with and without occlusion by other players.A single player is tracked, the player has variable speed because he is at
+Multiple players can be tracked with and without occlusion by other players. A single player is tracked, the player has variable speed because he is at
 different points accelerating or decelerating. A problem would occur if a
 player is moving so fast that he moves out of the basin of attraction in the
 next frame. For this dataset, this can become a problem since the players are
@@ -261,7 +261,7 @@ the image 2x without smoothing or interpolation to test on data with bad
 quality. As a comparison we also used images without downsampling. Another comparison is made for the performance of the mean-shift tracker with different color models
 and different bin sizes.  We use 4 different color models, RGB, XY, rg
 (normalised red and green), H (hue) and HSV (hue, saturation, intensity). We
-also use 4 different bin sizes\footnote{The bin sized is directly dependent on  the number of bins
+also use 4 different bin sizes\footnote{The bin size is directly dependent on  the number of bins
 per color channel used to model the target/candidate histogram.}.
 
 \subsubsection{Experiment Soccer2}
@@ -280,14 +280,14 @@ The variable for downsampling has been eliminated, since the tracker already per
 To test the performane of the tracker in a different domain, a movie of Tjerk
 skydiving was also used for tracking, see Figure 3-4. In this movie a dual jump is made, which is
 filmed from an airplane. The starting frames of this movie are aliased, this movie starts with bad image quality.
-The skydivers(object) diminish in size quickly, furthermore the object rotates in the air, presenting different angles to the camera. The object has a bright color, while the background is a patchwork of white and grey clouds, green and brown fields. It is also worth mentioning that the object falls through a cloud, blending it's color with that of the cloud.
-This dataset can be considered more difficult that the soccer domain.
+The skydivers (object) diminish in size quickly, furthermore the object rotates in the air, presenting different angles to the camera. The object has a bright color, while the background is a patchwork of white and grey clouds, green and brown fields. It is also worth mentioning that the object falls through a cloud, blending it's color with that of the cloud.
+This dataset can be considered more difficult than the soccer domain.
  
 
 \subsubsection{Experiment Freefall}
-This experiment is setup to test the mean-shift tracker with variable
+This experiment is setup to test the mean-shift tracker with 
 \begin{itemize}
-\item window size
+\item variable window size
 \item differing datasets
 \end{itemize}
 
@@ -303,7 +303,7 @@ The results of experiment Soccer1 are represented in Table 1. Experiment Soccer2
 \begin{table}
 	\centering
 	\caption{Results of Soccer1, mean-shift performance tested on differing color models, downsample rate and
-	histogram bins per color channel(4,8,16,32). + means the tracker kept track for a minimum of 10 seconds.}
+	histogram bins per color channel (4,8,16,32). + means the tracker kept track for a minimum of 10 seconds.}
 
 	\begin{tabular}{l*{7}{r|}}
 		\label{table:fase1}
@@ -325,7 +325,7 @@ The results of experiment Soccer1 are represented in Table 1. Experiment Soccer2
 
 \begin{table}
 	\centering
-	\caption{Results of Soccer2, mean-shift performance tested on differing color models, and histogram bins per color channel(2,4,8,16,32) for a scene containing occlusion. + means the tracker kept track for a minimum of 10 seconds.} 
+	\caption{Results of Soccer2, mean-shift performance tested on differing color models, and histogram bins per color channel (2,4,8,16,32) for a scene containing occlusion. + means the tracker kept track for a minimum of 10 seconds.} 
 	\begin{tabular}{l*{8}{r|}}
 		\label{table:fase2}
 		scene	& 	color model	&  2 & 4 & 8 & 16 & 32\\
@@ -368,12 +368,12 @@ An example where the tracker fails can be seen in Figure 1. On the
 other hand an example of a succesful tracking result can be seen in
 Figure 2.
 
-During the Freefall experiment Figure 3-4, the track was never lost even though the skydivers are small in the end. From this we can conclude that the tracker works well for different domains. Also, the variable window size works, in this domain with a quickly in size diminishing object, the tracker had no problem resizing the window to include the object. Though critcism can be expressed about the fact that in the the target model is the head of the skydiver, whereas in the end the track is on the whole of the skydivers. Yet this does not take away from that fact that the track on the whole of the object is not lost.  
+During the Freefall experiment Figure 3-4, the track was never lost even though the skydivers are small in the end. From this we can conclude that the tracker works well for different domains. Also, the variable window size works, in this domain with a quickly in size diminishing object, the tracker had no problem resizing the window to include the object. Though critcism can be expressed about the fact that in the the target model is the head of the skydiver, whereas in the end the track is on the whole of the skydivers. Yet this does not take away the fact that it kept track on the whole of the object.  
 
  
 
 \subsubsection{Brute Force Discussion} 
-During the project the brute force tracker was implemented, but later modified to the mean-shift tracker, therefore we will not give a comparison of all the results obtained for the mean-shift tracker. A discussion of some anecdotal evidence, from the soccer domain, about results obtained by the brute force tracker can however be given. Computing the Bhattacharyya distance for every possible candidate region in an image is extremely slow, not to mention memory intensive\footnote{the MATLAB approach of using sliding windows creates memory problems, it that the matrix containing all sliding windows for an image becomes huge.}. However, if a sufficiently large region around the last known position is selected the object is tracked well, for un-occluded players. In the soccer domain, half the width of the player, added to each side of the last found object region, gave good results. Occlusion remained a problem, in one instance during a track, a player was tracked from left to right, while a teammate passed right to left in front of the tracked individual. The track of the 1st player was lost while the second was now the new tracked object. Since they were teammates they were both wearing the same sporting outfits, therefore, this confusing tracking behaviour is not unforseen if only color is used.
+During the project the brute force tracker was implemented, but later modified to the mean-shift tracker, therefore we will not give a comparison of all the results obtained for the mean-shift tracker. A discussion of some anecdotal evidence, from the soccer domain, about results obtained by the brute force tracker can however be given. Computing the Bhattacharyya distance for every possible candidate region in an image is extremely slow, not to mention memory intensive\footnote{the MATLAB approach of using sliding windows creates memory problems, in that the matrix containing all sliding windows for an image becomes huge.}. However, if a sufficiently large region around the last known position is selected the object is tracked well, for un-occluded players. In the soccer domain, half the width of the player, added to each side of the last found object region, gave good results. Occlusion remained a problem, in one instance during a track, a player was tracked from left to right, while a teammate passed right to left in front of the tracked individual. The track of the 1st player was lost while the second was now (wrongly) considered as the new tracked object. Since they were teammates they were both wearing the same sporting outfits, therefore, this confusing tracking behaviour is not unforseen if only color is used.
 
 \begin{figure}[!ht]
 \label{fig:RGB_8}
@@ -409,11 +409,11 @@ RGB color space with 8 histogram bins per color channel. The tracker performs ve
 \end{figure}
 
 \section{Future Work} \label{sec:fut}
-It is remarkable that downsampling has such poor effects for tracking in all color models, while non-downsampled frames get tracked well. This could partly be explained by the lack of proper smoothing in the downsampling used. Therefore, Gaussian smoothing before downsampling should improve performance on downsampled images. Possibly a critical point can be determined where further downsampling would have disasterous effects. One might also think of a Gaussian pyramide, experiments might determine what the smallest picture in the Gaussian pyramid is, that still gives a good track. With this information tracking can be done on the smallest possible image, improving the speed of the tracker. Another speed improvement can be investigated by skipping frames and finding how many can be skipped to not loose track.
+It is remarkable that downsampling has such poor effects for tracking in all color models, while non-downsampled frames get tracked well. This could partly be explained by the lack of proper smoothing in the downsampling used. Therefore, Gaussian smoothing before downsampling should improve performance on downsampled images. Possibly a critical point can be determined where further downsampling would have disasterous effects. One might also think of a Gaussian pyramide, experiments might determine what the smallest picture in the Gaussian pyramid is, that still gives a good track. With this information tracking can be done on the smallest possible image, improving the speed of the tracker. Another speed improvement can be investigated by skipping frames and determining how many can be skipped while keeping track.
  
-Another topic for further investigation, follows from the experiments with occlusion, only tracking on color seems to be too sparse of a description. For example, when 2 players bypassed each other the tracking sometimes passes from one to the other player. If speed of the object is also used in the description this behavior could be avoided. This would include implementing a Kalman filter to keep track of the speed. 
+Another topic for further investigation, follows from the experiments with occlusion, only tracking on color seems to be too sparse of a description. For example, when 2 players bypassed each other, the tracking sometimes passes from one to the other player. If speed of the object is also used in the description this behavior could be avoided. This would include implementing a Kalman filter to keep track of the speed. 
 
-Furthermore, further research into why and when certain color models and histogram bin sizes work better than others, should make it possible to automatically detect what color model will work best in a movie. Thus this would enable automatic color model selection, which again should improve the tracker.
+Furthermore, further research into why and when certain color models and histogram bin sizes work better than others, should make it possible to automatically detect what color model will perform best in a movie. This would enable automatic color model selection, which again should improve the tracker.
 
 Some minor future work would make the tracker more robust, for instance in avoiding window sizes which are extremely small, or extremely big, or problems when the tracked object comes close to the boundary of the image frames, is also needed.
 
@@ -421,7 +421,7 @@ Last an important aspect which requires improvement is a good evaluation for tra
 
 
 \section{Conclusion} \label{sec:conc}
-The evaluation of the mean-shift tracker shows that it performs well once the right parameters for color model and histogram bin size are discovered. However the sole reliance of the tracker on color as a feature, shows in its performance on occlusion, which can be poor depending on the color model used. The speed of tracking is fast which means that there is enough processing time left for more computationally complex video analysis tasks. However, for real-time applications the loading and saving of images will have to be considered. 
+The evaluation of the mean-shift tracker shows that it performs well once the right parameters for color model and histogram bin size are discovered. However the sole reliance of the tracker on color as a feature, shows in its performance on occlusion, can be poor because it depends on the color model used. The speed of tracking is fast which means that there is enough processing time left for more computationally complex video analysis tasks. However, for real-time applications the loading and saving of images will have to be considered. 
 
 An interesting similarity between both the mean-shift tracker and the brute force tracker is that the tracked object cannot move too far from the last known position. The brute force tracker cannot exhaustively search the whole image for performance reasons and thus if the object falls outside of its search window it will lose track. For the mean-shift tracker, even though it does not have a search window it has a basin of attraction. If the player moves too far the last known position falls outside the basin of attraction and the track is also lost.
 
