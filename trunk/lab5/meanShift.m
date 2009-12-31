@@ -26,7 +26,6 @@ for i = 2:size(settings.frames, 4)
 	fprintf('\nmeanshift process %02.1f%\n\n', i/size(settings.frames, 4)*100);
     imgC = settings.frames(:,:,:,i);
 
-
 	shift = 1;
 	% perform shift till shift is negligible 
 	while(max(abs(shift))>=0.5)
@@ -39,11 +38,9 @@ for i = 2:size(settings.frames, 4)
 		% targetmodel
 		Qu = vectTHist;
 
-        warning off all
-		% the W's per bin
+ 		% the W's per bin
 		Wbin = sqrt(Qu./Pu);
-        warning on all
-		% solve Nan problem
+ 		% solve Nan problem
 		Wbin(Pu==0) = 0;
 		% set the W's in corresponding pixel in the image
 		W = Wbin(vectCLoc);
@@ -59,7 +56,8 @@ for i = 2:size(settings.frames, 4)
 	% store tracking data
     
 	RoiTracked(i,:) = [Roi(1:2), w, h];
-	% below searches for 
+
+    % % UNCOMMENT FOR VARYING WINDOWSIZE AT OWN RISK
     % % compare X
 	% % different roi's
     % cRois(1,:) = [Roi(1:2), w, h];

@@ -1,4 +1,14 @@
 function saveMovie(framesTracked, movieName, fps, quality, compression, settings)
+%SAVEMOVIE save a movie frome a frame matrix with size [m*n*c*i] 
+%   with m, n framesize, c=colorspace, i=number offrames
+% SAVEMOVIE(FRAMESTRACKED, MOVIENAME, FPS, QUALITY, COMPRESSION, SETTINGS)
+% FRAMESTRACKED = frame matrix
+% MOVIENAME = string with movie name
+% FPS = frames per second
+% QUALITY = quality
+% COMPRESSION = compression
+% SETTINGS = settings structure (see getSettings.m)
+
 % unix cannot compress
 if isunix
 	compression = 'None';

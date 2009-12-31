@@ -1,47 +1,50 @@
+%RUN 
+% perform multiple trackings with various settings
+% currently with N=4 bins and XY=1 colorspace.
 close all
-warning on all
+warning off all
 
-%disp('no or other settings found in workspace, resetting vars');
-%delete frames.mat;
-%delete Roi.mat
-
-%paramsN = [4, 8];
-%paramsColor = [0, 1];
-paramsN = [4]
-paramsColor = [1]
+% set parameters
+paramsN = [4];
+paramsColor = [1];
 inpGetRoi = 1;
-warning off 
 
+% do loop for different parameters
 for b = 1:length(paramsColor)
 	clear framesGlobal;
 	clear settings;
 	delete frames.mat;
 
-	inpColor = paramsColor(b)
+	inpColor = paramsColor(b);
 
 	for a = 1:length(paramsN)
 		inpN = paramsN(a);
 
-		disp('create settings');
+		%get settings
+        disp('create settings');
 		settings = getSettings('color',inpColor, 'getRoi',inpGetRoi, 'N',inpN);
-		disp('done'); 
+		disp('done');
+        
 		% perform mean shift
-
 		disp('perform meanshift');
 		RoiTracked = meanShift( settings );
 		disp('done');
 
+        %% write away results
+        % add tracked window
 		disp('add trackingdata to frames');
 		framesTracked = addTrackingData(RoiTracked, settings);
 		disp('done'); 
 
+        % save movie
 		if settings.saveAndShowMovie == 1
 			disp('saving movie');
 			saveMovie(framesTracked, 'result.avi', 10, 100,'Cinepak', settings);
 			disp('done');
-		end
+        end
 
 
+        % save montage
 		thumbnailSize = 6;
 		stepSize = 10;
 
